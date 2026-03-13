@@ -1,0 +1,69 @@
+<view class="container">
+  <view class="header">
+    <view class="title">🗺️ 家庭地图</view>
+  </view>
+
+  <view class="map-container">
+    <map 
+      id="map"
+      longitude="{{longitude}}"
+      latitude="{{latitude}}"
+      scale="16"
+      show-location="true"
+      class="map"
+    >
+      <marker 
+        longitude="{{longitude}}"
+        latitude="{{latitude}}"
+        iconPath="/images/location.png"
+        width="30"
+        height="30"
+      ></marker>
+    </map>
+  </view>
+
+  <view class="location-info">
+    <view class="info-card">
+      <view class="info-title">📍 当前位置</view>
+      <view class="info-text">{{address}}</view>
+    </view>
+    
+    <view class="info-card">
+      <view class="info-title">🏠 家的位置</view>
+      <view class="info-text home-info">
+        <view class="home-name">{{homeAddress}}</view>
+        <view class="home-detail" wx:if="{{homeDetailAddress}}">📍 {{homeDetailAddress}}</view>
+        <view class="home-tips">💡 首次使用请先设置家的位置</view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-title">👨‍👩‍👧 家人位置</view>
+      <view class="family-list">
+        <view class="family-item" wx:for="{{familyMembers}}" wx:key="id">
+          <view class="family-avatar">{{item.avatar}}</view>
+          <view class="family-info">
+            <view class="family-name">{{item.name}}</view>
+            <view class="family-distance">{{item.distance}}</view>
+          </view>
+          <view class="family-status {{item.online ? 'online' : 'offline'}}">
+            {{item.online ? '在线' : '离线'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-buttons">
+    <button class="action-btn home-btn" bindtap="navigateHome">
+      🏠 一键导航回家
+    </button>
+    <button class="action-btn set-btn" bindtap="setHomeLocation">
+      ⚙️ 设置家的位置
+    </button>
+  </view>
+
+  <view class="refresh-btn" bindtap="refreshLocation">
+    🔄 刷新位置
+  </view>
+</view>

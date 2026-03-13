@@ -1,0 +1,282 @@
+.container {
+  padding: 30rpx;
+}
+
+.header {
+  margin-bottom: 30rpx;
+}
+
+.greeting {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 10rpx;
+}
+
+.date {
+  font-size: 26rpx;
+  color: #6b7280;
+}
+
+.emergency-alert {
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.emergency-active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.emergency-safe {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.emergency-icon {
+  font-size: 60rpx;
+  flex-shrink: 0;
+}
+
+.emergency-content {
+  flex: 1;
+}
+
+.emergency-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8rpx;
+}
+
+.emergency-time {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.emergency-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.emergency-check {
+  background: white;
+  color: #ef4444;
+  border: none;
+  border-radius: 12rpx;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.emergency-check::after {
+  border: none;
+}
+
+.emergency-clear {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2rpx solid white;
+  border-radius: 12rpx;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.emergency-clear::after {
+  border: none;
+}
+
+.status-card {
+  border-radius: 20rpx;
+  padding: 40rpx;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.status-emergency {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.status-safe {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.status-icon {
+  font-size: 60rpx;
+  margin-bottom: 15rpx;
+}
+
+.status-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8rpx;
+}
+
+.status-time {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.action-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx 20rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.action-icon {
+  font-size: 60rpx;
+  margin-bottom: 15rpx;
+}
+
+.action-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #374151;
+}
+
+.alert-badge {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: #ef4444;
+  color: white;
+  font-size: 20rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 25rpx;
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 30rpx;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #3b82f6;
+  margin-right: 20rpx;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-time {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-bottom: 5rpx;
+}
+
+.timeline-text {
+  font-size: 28rpx;
+  color: #374151;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20rpx;
+}
+
+.health-item {
+  text-align: center;
+  padding: 30rpx 10rpx;
+  background: #f8fafc;
+  border-radius: 12rpx;
+}
+
+.health-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8rpx;
+}
+
+.health-label {
+  font-size: 24rpx;
+  color: #6b7280;
+}
+
+.logout-section {
+  margin-top: 40rpx;
+}
+
+.logout-btn {
+  width: 100%;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+}
+
+/* 绑定老人卡片 */
+.bind-elder-card {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin: 30rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(139, 92, 246, 0.3);
+}
+
+.btn-bind-elder {
+  background: white;
+  color: #7c3aed;
+  border: none;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 10rpx;
+}
+
+.bind-tip {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+}

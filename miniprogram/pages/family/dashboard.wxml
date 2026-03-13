@@ -1,0 +1,91 @@
+<view class="container">
+  <view class="header">
+    <view class="greeting">您好，子女！👋</view>
+    <view class="date">{{currentDate}}</view>
+  </view>
+
+  <view class="emergency-alert {{hasEmergency ? 'emergency-active' : 'emergency-safe'}}">
+    <view class="emergency-icon">{{hasEmergency ? '🚨' : '✅'}}</view>
+    <view class="emergency-content">
+      <view class="emergency-title">{{hasEmergency ? '紧急求助！' : '安全'}}</view>
+      <view class="emergency-time" wx:if="{{hasEmergency}}">发送时间：{{emergencyTime}}</view>
+      <view class="emergency-time" wx:else>老人状态正常</view>
+    </view>
+    <view class="emergency-buttons" wx:if="{{hasEmergency}}">
+      <button class="emergency-check" bindtap="goToAlerts">查看详情</button>
+      <button class="emergency-clear" bindtap="clearEmergency">取消报警</button>
+    </view>
+  </view>
+
+  <view class="status-card {{hasEmergency ? 'status-emergency' : 'status-safe'}}">
+    <view class="status-icon">{{hasEmergency ? '🚨' : '✅'}}</view>
+    <view class="status-text">老人状态：{{hasEmergency ? '紧急求助中' : '安全'}}</view>
+    <view class="status-time">最后更新：{{lastUpdateTime}}</view>
+  </view>
+
+  <view class="quick-actions">
+    <view class="action-card" bindtap="goToMap">
+      <view class="action-icon">📍</view>
+      <view class="action-title">实时定位</view>
+    </view>
+    <view class="action-card" bindtap="goToAlerts">
+      <view class="action-icon">🔔</view>
+      <view class="action-title">告警中心</view>
+      <view class="alert-badge" wx:if="{{alertCount > 0}}">{{alertCount}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">今日动态</view>
+    <view class="timeline-item">
+      <view class="timeline-dot"></view>
+      <view class="timeline-content">
+        <view class="timeline-time">08:05</view>
+        <view class="timeline-text">已完成早餐服药</view>
+      </view>
+    </view>
+    <view class="timeline-item">
+      <view class="timeline-dot"></view>
+      <view class="timeline-content">
+        <view class="timeline-time">09:30</view>
+        <view class="timeline-text">出门散步</view>
+      </view>
+    </view>
+    <view class="timeline-item">
+      <view class="timeline-dot"></view>
+      <view class="timeline-content">
+        <view class="timeline-time">11:00</view>
+        <view class="timeline-text">回到家中</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">健康数据</view>
+    <view class="health-grid">
+      <view class="health-item">
+        <view class="health-value">120/80</view>
+        <view class="health-label">血压</view>
+      </view>
+      <view class="health-item">
+        <view class="health-value">72</view>
+        <view class="health-label">心率</view>
+      </view>
+      <view class="health-item">
+        <view class="health-value">6.2</view>
+        <view class="health-label">血糖</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bind-elder-card">
+    <button class="btn-bind-elder" bindtap="goToBindElder">
+      👨‍👧👦 绑定老人账号
+    </button>
+    <view class="bind-tip">最多可绑定 3 位老人</view>
+  </view>
+
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">返回首页</button>
+  </view>
+</view>

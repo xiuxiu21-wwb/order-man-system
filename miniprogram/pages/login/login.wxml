@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="header">
+    <view class="logo">🧓</view>
+    <view class="title">认知障碍老人陪伴系统</view>
+  </view>
+
+  <view class="form">
+    <view class="form-item">
+      <view class="label">手机号/用户名</view>
+      <input class="input" placeholder="请输入手机号或用户名" value="{{login}}" bindinput="onLoginInput" />
+    </view>
+
+    <view class="form-item">
+      <view class="label">密码</view>
+      <input class="input" placeholder="请输入密码" value="{{password}}" password="{{true}}" bindinput="onPasswordInput" />
+    </view>
+
+    <button class="btn-primary" bindtap="handleLogin">登录</button>
+
+    <view class="link-group">
+      <text class="link" bindtap="goToRegister">还没有账号？立即注册</text>
+    </view>
+  </view>
+</view>

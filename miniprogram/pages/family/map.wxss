@@ -1,0 +1,161 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 30rpx;
+  background: white;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.map-container {
+  flex: 1;
+  position: relative;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.info-panel {
+  background: white;
+  padding: 30rpx;
+  border-top: 1rpx solid #e5e7eb;
+}
+
+.elder-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25rpx;
+}
+
+.elder-avatar {
+  font-size: 70rpx;
+  margin-right: 20rpx;
+}
+
+.elder-details {
+  flex: 1;
+}
+
+.elder-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8rpx;
+}
+
+.elder-location {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin-bottom: 5rpx;
+}
+
+.elder-time {
+  font-size: 22rpx;
+  color: #9ca3af;
+}
+
+.status-badge {
+  font-size: 24rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+  font-weight: 600;
+}
+
+.status-badge.safe {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-badge.warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.action-btn {
+  padding: 24rpx;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.action-btn.secondary {
+  background: white;
+  color: #374151;
+  border: 2rpx solid #e5e7eb;
+}
+
+.track-info {
+  background: white;
+  padding: 30rpx;
+  border-top: 1rpx solid #e5e7eb;
+}
+
+.track-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 20rpx;
+}
+
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.track-item {
+  display: flex;
+  padding: 15rpx 0;
+  border-bottom: 1rpx solid #f3f4f6;
+}
+
+.track-item:last-child {
+  border-bottom: none;
+}
+
+.track-time {
+  font-size: 24rpx;
+  color: #6b7280;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.track-address {
+  font-size: 26rpx;
+  color: #374151;
+  flex: 1;
+}
+
+.refresh-btn {
+  position: absolute;
+  top: 120rpx;
+  right: 30rpx;
+  background: white;
+  padding: 20rpx 30rpx;
+  border-radius: 50rpx;
+  font-size: 26rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}

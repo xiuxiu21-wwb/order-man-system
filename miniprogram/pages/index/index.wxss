@@ -1,0 +1,58 @@
+.container {
+  min-height: 100vh;
+  padding: 40rpx 30rpx;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+
+.logo {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #6b7280;
+}
+
+.card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 50rpx 40rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 10rpx;
+}
+
+.card-desc {
+  font-size: 28rpx;
+  color: #6b7280;
+}

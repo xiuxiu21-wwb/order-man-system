@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="header">
+    <view class="title">📰 今日新闻</view>
+    <view class="refresh-btn" bindtap="refreshNews">
+      {{loading ? '刷新中...' : '🔄 刷新'}}
+    </view>
+  </view>
+
+  <view class="news-list">
+    <view class="news-item" wx:for="{{newsList}}" wx:key="id" bindtap="viewNews" data-id="{{item.id}}">
+      <image src="{{item.image}}" class="news-image" mode="aspectFill"></image>
+      <view class="news-content">
+        <view class="news-title">{{item.title}}</view>
+        <view class="news-desc">{{item.description}}</view>
+        <view class="news-meta">
+          <view class="news-time">{{item.time}}</view>
+          <view class="news-source">{{item.source}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-more" wx:if="{{hasMore}}">
+    <view class="loading-text" bindtap="loadMore">加载更多</view>
+  </view>
+
+  <view class="no-more" wx:if="{{!hasMore && newsList.length > 0}}">
+    没有更多了
+  </view>
+</view>

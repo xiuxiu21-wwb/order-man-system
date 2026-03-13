@@ -1,0 +1,7 @@
+<view class="uid-watermark" wx:if="{{uid}}">
+  <view class="uid-content">
+    <text class="uid-icon">👤</text>
+    <text class="uid-text">我的 UID: {{uid}}</text>
+    <text class="uid-copy" bindtap="copyUid">📋 复制</text>
+  </view>
+</view>

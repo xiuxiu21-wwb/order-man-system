@@ -1,0 +1,35 @@
+# 核心依赖
+fastapi
+uvicorn
+python-dotenv
+
+# 数据库
+sqlalchemy
+
+# 认证
+python-jose
+passlib
+
+# 异步任务
+celery
+redis
+
+# 位置服务
+gpxpy
+
+# 工具
+requests
+httpx
+pydantic
+pydantic-settings
+
+# 火山引擎
+volcenginesdkarkruntime
+
+# WebSocket
+websockets
+
+# 开发工具
+pytest
+black
+flake8

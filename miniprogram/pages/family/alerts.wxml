@@ -1,0 +1,68 @@
+<view class="container">
+  <view class="header">
+    <view class="title">🔔 告警中心</view>
+    <view class="badge" wx:if="{{unreadCount > 0}}">{{unreadCount}}</view>
+  </view>
+
+  <view class="filter-tabs">
+    <view 
+      class="filter-tab {{currentFilter === 'all' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="all"
+    >
+      全部
+    </view>
+    <view 
+      class="filter-tab {{currentFilter === 'emergency' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="emergency"
+    >
+      紧急
+    </view>
+    <view 
+      class="filter-tab {{currentFilter === 'warning' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="warning"
+    >
+      警告
+    </view>
+    <view 
+      class="filter-tab {{currentFilter === 'info' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="info"
+    >
+      通知
+    </view>
+  </view>
+
+  <view class="alerts-list">
+    <view 
+      class="alert-item {{item.type}} {{item.read ? 'read' : ''}}" 
+      wx:for="{{filteredAlerts}}" 
+      wx:key="id"
+      bindtap="viewAlert"
+      data-id="{{item.id}}"
+    >
+      <view class="alert-icon">{{item.icon}}</view>
+      <view class="alert-content">
+        <view class="alert-header">
+          <view class="alert-title">{{item.title}}</view>
+          <view class="alert-time">{{item.time}}</view>
+        </view>
+        <view class="alert-desc">{{item.description}}</view>
+        <view class="alert-tags">
+          <view class="alert-tag">{{item.typeText}}</view>
+          <view class="alert-tag" wx:if="{{item.location}}">📍 {{item.location}}</view>
+        </view>
+      </view>
+      <view class="alert-status" wx:if="{{!item.read}}">
+        <view class="unread-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{filteredAlerts.length === 0}}">
+    <view class="empty-icon">✅</view>
+    <view class="empty-text">暂无告警</view>
+  </view>
+</view>

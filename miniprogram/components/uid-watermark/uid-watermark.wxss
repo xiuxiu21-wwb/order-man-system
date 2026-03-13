@@ -1,0 +1,45 @@
+.uid-watermark {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95));
+  color: white;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  z-index: 9999;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.uid-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.uid-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.uid-text {
+  flex: 1;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 20rpx;
+}
+
+.uid-copy {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  white-space: nowrap;
+}
+
+.uid-copy:active {
+  background: rgba(255, 255, 255, 0.3);
+}

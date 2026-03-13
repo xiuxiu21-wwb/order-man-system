@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="header">
+    <view class="logo">🧓</view>
+    <view class="title">认知障碍老人陪伴系统</view>
+    <view class="subtitle">请选择您的身份</view>
+  </view>
+
+  <view class="card" bindtap="goToElder">
+    <view class="card-icon">👴</view>
+    <view class="card-title">大爷端</view>
+    <view class="card-desc">智能陪伴、服药提醒、一键求助</view>
+  </view>
+
+  <view class="card" bindtap="goToFamily">
+    <view class="card-icon">👨‍👩‍👧</view>
+    <view class="card-title">子女端</view>
+    <view class="card-desc">实时定位、告警查看、轨迹回放</view>
+  </view>
+</view>

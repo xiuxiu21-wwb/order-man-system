@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="header">
+    <view class="title">📷 图片识别</view>
+    <view class="subtitle">上传图片，让我帮您看看</view>
+  </view>
+
+  <view class="image-preview" wx:if="{{selectedImage}}">
+    <image src="{{selectedImage}}" mode="aspectFit" class="preview-image"></image>
+  </view>
+
+  <view class="upload-placeholder" wx:else>
+    <view class="placeholder-icon">📸</view>
+    <view class="placeholder-text">请选择或拍摄一张图片</view>
+  </view>
+
+  <view class="action-buttons">
+    <button class="action-btn secondary" bindtap="chooseImage">
+      📁 选择图片
+    </button>
+    <button class="action-btn secondary" bindtap="takePhoto">
+      📷 拍照
+    </button>
+  </view>
+
+  <button 
+    class="recognize-btn" 
+    bindtap="recognizeImage" 
+    disabled="{{!selectedImage || loading}}"
+  >
+    {{loading ? '🔍 识别中...' : '🔍 开始识别'}}
+  </button>
+
+  <view class="result-card" wx:if="{{result}}">
+    <view class="result-header">
+      <view class="result-icon">✨</view>
+      <view class="result-title">识别结果</view>
+    </view>
+    <view class="result-text">{{result}}</view>
+  </view>
+</view>

@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="header">
+    <view class="title">用户注册</view>
+    <view class="subtitle">{{userType === 'elder' ? '老人账号注册' : '子女账号注册'}}</view>
+  </view>
+
+  <view class="form">
+    <view class="form-item">
+      <view class="label">姓名</view>
+      <input class="input" placeholder="请输入真实姓名" value="{{name}}" bindinput="onNameInput" />
+    </view>
+
+    <view class="form-item">
+      <view class="label">手机号</view>
+      <input class="input" placeholder="请输入手机号" type="number" maxlength="11" value="{{phone}}" bindinput="onPhoneInput" />
+    </view>
+
+    <view class="form-item">
+      <view class="label">密码</view>
+      <input class="input" placeholder="请设置密码（至少 6 位）" password="{{true}}" value="{{password}}" bindinput="onPasswordInput" />
+    </view>
+
+    <view class="form-item">
+      <view class="label">确认密码</view>
+      <input class="input" placeholder="请再次输入密码" password="{{true}}" value="{{confirmPassword}}" bindinput="onConfirmPasswordInput" />
+    </view>
+
+    <!-- 验证码 -->
+    <view class="form-item verify-code-item">
+      <view class="label">验证码 <text class="required">*</text></view>
+      <view class="verify-code-area">
+        <input 
+          class="verify-code-input" 
+          placeholder="请输入验证码" 
+          type="number" 
+          maxlength="4" 
+          value="{{verifyCode}}" 
+          bindinput="onVerifyCodeInput" 
+        />
+        <view class="verify-code-image" bindtap="refreshVerifyCode">
+          <image wx:if="{{verifyCodeImage}}" src="{{verifyCodeImage}}" mode="aspectFill" />
+          <view wx:else class="verify-code-placeholder">点击刷新</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 子女注册需要输入老人 UID -->
+    <view class="form-item" wx:if="{{showUidInput}}">
+      <view class="label">老人 UID <text class="required">*</text></view>
+      <input 
+        class="input" 
+        placeholder="请输入老人的 UID（向老人获取）" 
+        value="{{elderUid}}" 
+        bindinput="onElderUidInput" 
+      />
+      <view class="uid-tip">💡 需要向老人索要 UID 才能完成绑定</view>
+    </view>
+
+    <button class="btn-primary" bindtap="handleRegister">注册</button>
+
+    <view class="link-group">
+      <text class="link" bindtap="goToLogin">已有账号？立即登录</text>
+    </view>
+  </view>
+</view>

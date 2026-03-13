@@ -1,0 +1,8 @@
+<view class="container">
+  <text class="title">网络连接测试</text>
+  <button bindtap="testNetwork" type="primary" style="margin: 20rpx 0;">测试网络连接</button>
+  <button bindtap="testLogin" type="success" style="margin: 20rpx 0;">测试登录接口</button>
+  <view class="result">
+    <text>{{testResult}}</text>
+  </view>
+</view>

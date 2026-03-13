@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="header">
+    <view class="title">📍 实时定位</view>
+  </view>
+
+  <view class="map-container">
+    <map 
+      id="map"
+      longitude="{{elderLongitude}}"
+      latitude="{{elderLatitude}}"
+      scale="15"
+      show-location="false"
+      class="map"
+      bindmarkertap="onMarkerTap"
+    >
+      <marker 
+        id="elder"
+        longitude="{{elderLongitude}}"
+        latitude="{{elderLatitude}}"
+        iconPath="/images/elder-location.png"
+        width="40"
+        height="40"
+        callout="{{elderCallout}}"
+      ></marker>
+      
+      <polyline 
+        points="{{trackPoints}}"
+        color="#3b82f6"
+        width="6"
+        dottedLine="false"
+      ></polyline>
+    </map>
+  </view>
+
+  <view class="info-panel">
+    <view class="elder-info">
+      <view class="elder-avatar">👴</view>
+      <view class="elder-details">
+        <view class="elder-name">爸爸</view>
+        <view class="elder-location">{{elderAddress}}</view>
+        <view class="elder-time">更新时间：{{updateTime}}</view>
+      </view>
+      <view class="status-badge safe">
+        安全
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <button class="action-btn primary" bindtap="callElder">
+        📞 打电话
+      </button>
+      <button class="action-btn secondary" bindtap="viewTrack">
+        🛤️ 轨迹回放
+      </button>
+    </view>
+  </view>
+
+  <view class="track-info" wx:if="{{showTrack}}">
+    <view class="track-title">今日轨迹</view>
+    <view class="track-list">
+      <view class="track-item" wx:for="{{trackList}}" wx:key="index">
+        <view class="track-time">{{item.time}}</view>
+        <view class="track-address">{{item.address}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="refresh-btn" bindtap="refreshLocation">
+    {{loading ? '刷新中...' : '🔄 刷新位置'}}
+  </view>
+</view>

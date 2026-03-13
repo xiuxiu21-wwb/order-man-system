@@ -1,0 +1,109 @@
+<view class="container">
+  <view class="header">
+    <view class="greeting">您好，大爷！👋</view>
+    <view class="date-row">
+      <view class="date">{{currentDate}}</view>
+      <view class="uid-display" wx:if="{{uid}}" bindtap="copyUid">
+        <text class="uid-text">UID: {{uid}}</text>
+        <text class="uid-copy-btn">📋 一键复制</text>
+      </view>
+    </view>
+    
+    <!-- 天气卡片 -->
+    <view class="weather-card" wx:if="{{weather}}">
+      <view class="weather-main">
+        <view class="weather-icon">{{weather.weather_icon}}</view>
+        <view class="weather-info">
+          <view class="weather-temp">{{weather.temperature}}°C</view>
+          <view class="weather-text">{{weather.weather}}</view>
+        </view>
+      </view>
+      <view class="weather-details">
+        <view class="detail-item">
+          <text class="detail-label">💧 湿度</text>
+          <text class="detail-value">{{weather.humidity}}%</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">🌬️ 风向</text>
+          <text class="detail-value">{{weather.winddirection}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">💨 风力</text>
+          <text class="detail-value">{{weather.windpower}}级</text>
+        </view>
+      </view>
+      <view class="weather-location">📍 {{weather.city}}</view>
+      
+      <!-- 未来预报 -->
+      <view class="weather-forecast" wx:if="{{weather.forecasts && weather.forecasts.length > 0}}">
+        <view class="forecast-title">未来天气</view>
+        <view class="forecast-list">
+          <view class="forecast-item" wx:for="{{weather.forecasts}}" wx:key="date">
+            <view class="forecast-date">{{item.date}}</view>
+            <view class="forecast-weather">{{item.dayweather}}</view>
+            <view class="forecast-temp">{{item.daytemp}}°C / {{item.nighttemp}}°C</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="weather-loading" wx:elif="{{loadingWeather}}">
+      <view class="loading-spinner">🌤️</view>
+      <view class="loading-text">正在获取天气...</view>
+    </view>
+    
+    <view class="weather-default" wx:else>
+      <view class="weather-icon">🌤️</view>
+      <view class="weather-text">天气数据加载中</view>
+    </view>
+  </view>
+
+  <view class="quick-actions">
+    <view class="action-card" bindtap="goToVoice">
+      <view class="action-icon">🎤</view>
+      <view class="action-title">AI 语音陪伴</view>
+    </view>
+    <view class="action-card" bindtap="goToMedication">
+      <view class="action-icon">💊</view>
+      <view class="action-title">服药提醒</view>
+    </view>
+    <view class="action-card" bindtap="goToImageRecognition">
+      <view class="action-icon">📷</view>
+      <view class="action-title">图片识别</view>
+    </view>
+    <view class="action-card" bindtap="goToMap">
+      <view class="action-icon">🗺️</view>
+      <view class="action-title">家庭地图</view>
+    </view>
+    <view class="action-card" bindtap="goToNews">
+      <view class="action-icon">📰</view>
+      <view class="action-title">今日新闻</view>
+    </view>
+  </view>
+
+  <view class="emergency-section">
+    <button class="emergency-btn" bindtap="triggerEmergency">
+      🚨 一键求助
+    </button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">今日提醒</view>
+    
+    <!-- 动态加载药品提醒 -->
+    <view class="reminder-item" wx:for="{{medications}}" wx:key="time">
+      <view class="reminder-time">{{item.time}}</view>
+      <view class="reminder-content">{{item.dosage}}</view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-reminder" wx:if="{{medications.length === 0}}">
+      <view class="empty-text">暂无服药提醒</view>
+      <view class="empty-hint">请前往服药提醒页面添加药品</view>
+    </view>
+  </view>
+
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">返回首页</button>
+  </view>
+</view>

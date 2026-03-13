@@ -1,0 +1,55 @@
+<view class="container">
+  <view class="header">
+    <view class="title">绑定老人账号</view>
+    <view class="subtitle">最多可绑定 3 位老人</view>
+  </view>
+
+  <view class="bound-list" wx:if="{{boundElders.length > 0}}">
+    <view class="section-title">已绑定的老人 ({{boundElders.length}}/3)</view>
+    <view class="elder-item" wx:for="{{boundElders}}" wx:key="id">
+      <view class="elder-avatar">👴</view>
+      <view class="elder-info">
+        <view class="elder-name">{{item.name}}</view>
+        <view class="elder-uid">UID: {{item.elder_uid}}</view>
+      </view>
+      <view class="elder-actions">
+        <button class="btn-delete" bindtap="unbindElder" data-id="{{item.id}}">解绑</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="bind-form">
+    <view class="section-title">{{boundElders.length >= 3 ? '已达绑定上限' : '绑定新老人'}}</view>
+    
+    <view class="form-item">
+      <view class="label">老人 UID</view>
+      <input 
+        class="input" 
+        placeholder="请输入老人的 UID" 
+        value="{{elderUid}}" 
+        bindinput="onElderUidInput"
+        disabled="{{boundElders.length >= 3}}"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label">关系</view>
+      <picker mode="selector" range="{{relationships}}" value="{{relationshipIndex}}" bindchange="onRelationshipChange" disabled="{{boundElders.length >= 3}}">
+        <view class="picker">{{relationships[relationshipIndex]}}</view>
+      </picker>
+    </view>
+
+    <button class="btn-primary" bindtap="bindElder" disabled="{{boundElders.length >= 3}}">
+      {{boundElders.length >= 3 ? '已达上限' : '立即绑定'}}
+    </button>
+  </view>
+
+  <view class="tips">
+    <view class="tips-title">💡 如何获取老人 UID？</view>
+    <view class="tips-content">
+      <view>1. 让老人在其账号首页查看 UID</view>
+      <view>2. UID 显示在日期右侧</view>
+      <view>3. 点击"📋 复制"即可复制 UID</view>
+    </view>
+  </view>
+</view>
