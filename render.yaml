@@ -1,0 +1,34 @@
+build:
+  image: python:3.11
+  command: pip install -r requirements.txt
+  watch:
+    - paths:
+        - .
+      ignore:
+        - frontend/
+        - miniprogram/
+        - .git/
+        - "*.md"
+
+deploy:
+  image: python:3.11
+  command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+  health:
+    path: /api/health
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+
+services:
+  - type: web
+    name: order-man-system
+    env: python
+    region: singapore
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
