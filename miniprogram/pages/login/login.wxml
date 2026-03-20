@@ -1,24 +1,42 @@
 <view class="container">
-  <view class="header">
-    <view class="logo">🧓</view>
-    <view class="title">认知障碍老人陪伴系统</view>
+  <view class="header-section">
+    <view class="logo-circle">
+      <view class="logo-emoji">👴</view>
+    </view>
+    <view class="app-name">家护伴</view>
+    <view class="sub-title">让爱与陪伴常在</view>
   </view>
 
-  <view class="form">
-    <view class="form-item">
-      <view class="label">手机号/用户名</view>
-      <input class="input" placeholder="请输入手机号或用户名" value="{{login}}" bindinput="onLoginInput" />
+  <view class="login-card">
+    <view class="card-title">欢迎回来</view>
+    
+    <view class="input-group">
+      <view class="input-label">账号</view>
+      <view class="input-wrapper">
+        <view class="input-icon">👤</view>
+        <input class="input" placeholder="请输入手机号或用户名" placeholder-class="placeholder" value="{{login}}" bindinput="onLoginInput" />
+      </view>
     </view>
 
-    <view class="form-item">
-      <view class="label">密码</view>
-      <input class="input" placeholder="请输入密码" value="{{password}}" password="{{true}}" bindinput="onPasswordInput" />
+    <view class="input-group">
+      <view class="input-label">密码</view>
+      <view class="input-wrapper">
+        <view class="input-icon">🔒</view>
+        <input class="input" type="password" placeholder="请输入密码" placeholder-class="placeholder" value="{{password}}" bindinput="onPasswordInput" />
+      </view>
     </view>
 
-    <button class="btn-primary" bindtap="handleLogin">登录</button>
+    <button class="login-btn" hover-class="btn-hover" bindtap="handleLogin">
+      立即登录
+    </button>
 
-    <view class="link-group">
-      <text class="link" bindtap="goToRegister">还没有账号？立即注册</text>
+    <view class="footer-links">
+      <view class="register-link" bindtap="goToRegister">
+        没有账号？<text class="highlight">立即注册</text>
+      </view>
     </view>
   </view>
+  
+  <view class="decoration-circle circle-1"></view>
+  <view class="decoration-circle circle-2"></view>
 </view>

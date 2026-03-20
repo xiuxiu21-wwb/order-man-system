@@ -1,74 +1,171 @@
+/* 顶部弧形背景 */
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 450rpx;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-bottom-left-radius: 60rpx;
+  border-bottom-right-radius: 60rpx;
+  z-index: 0;
+}
+
 .container {
   padding: 30rpx;
+  position: relative;
 }
 
 .header {
   margin-bottom: 40rpx;
+  position: relative;
+  z-index: 1;
 }
 
-.greeting {
-  font-size: 44rpx;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 10rpx;
+.greeting-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+  padding-top: 20rpx;
 }
 
-.date {
+.greeting-text {
+  flex: 1;
+}
+
+.hello {
   font-size: 28rpx;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4rpx;
 }
 
-.date-row {
+.user-name {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 2rpx;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.date-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  color: white;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.uid-card {
+  background: white;
+  border-radius: 24rpx;
+  padding: 24rpx 30rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 8rpx;
-  flex-wrap: wrap;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.08);
+  margin-bottom: 30rpx;
 }
 
-.uid-display {
-  display: flex;
-  align-items: center;
-  background: rgba(239, 68, 68, 0.1);
-  padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-  gap: 8rpx;
-  border: 2rpx solid rgba(239, 68, 68, 0.3);
-}
-
-.uid-text {
-  font-size: 22rpx;
-  color: #dc2626;
-  font-weight: 700;
-}
-
-.uid-copy-btn {
-  font-size: 22rpx;
-  color: #dc2626;
-  background: rgba(239, 68, 68, 0.2);
-  padding: 4rpx 12rpx;
-  border-radius: 12rpx;
+.uid-label {
+  font-size: 24rpx;
+  color: #9ca3af;
   font-weight: 600;
 }
 
-.uid-copy-btn:active {
-  background: rgba(239, 68, 68, 0.4);
+.uid-value {
+  flex: 1;
+  text-align: right;
+  font-family: monospace;
+  font-size: 28rpx;
+  color: #374151;
+  font-weight: 600;
+  margin: 0 20rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copy-hint {
+  font-size: 20rpx;
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+}
+
+.uid-card:active {
+  background: #f9fafb;
 }
 
 /* 天气卡片样式 */
 .weather-card {
   margin-top: 30rpx;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 20rpx;
-  padding: 30rpx;
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+  border-radius: 30rpx;
+  padding: 40rpx;
   color: white;
-  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10rpx 30rpx rgba(234, 88, 12, 0.25);
+  position: relative;
+  overflow: hidden;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12rpx); }
+  100% { transform: translateY(0px); }
+}
+
+.weather-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300rpx;
+  height: 300rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .weather-main {
   display: flex;
   align-items: center;
   margin-bottom: 15rpx;
+  flex: 1;
+}
+
+.refresh-btn {
+  width: 70rpx;
+  height: 70rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.refresh-icon {
+  font-size: 36rpx;
 }
 
 .weather-icon {
@@ -212,32 +309,48 @@
 
 .quick-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20rpx;
-  margin-bottom: 40rpx;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30rpx;
+  margin-bottom: 50rpx;
 }
 
 .action-card {
   background: white;
-  border-radius: 20rpx;
-  padding: 40rpx 20rpx;
+  border-radius: 30rpx;
+  padding: 50rpx 30rpx;
   text-align: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .action-icon {
-  font-size: 60rpx;
-  margin-bottom: 15rpx;
+  font-size: 70rpx;
+  margin-bottom: 20rpx;
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: #fff7ed;
+  border-radius: 50%;
+  color: #ea580c;
 }
 
 .action-title {
-  font-size: 28rpx;
-  font-weight: 600;
+  font-size: 30rpx;
+  font-weight: 700;
   color: #374151;
 }
 
 .emergency-section {
-  margin-bottom: 40rpx;
+  margin-bottom: 50rpx;
 }
 
 .emergency-btn {
@@ -245,51 +358,169 @@
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
   border: none;
-  border-radius: 16rpx;
+  border-radius: 40rpx;
   padding: 40rpx;
-  font-size: 36rpx;
-  font-weight: 700;
-  box-shadow: 0 8rpx 24rpx rgba(239, 68, 68, 0.3);
+  font-size: 38rpx;
+  font-weight: 800;
+  box-shadow: 0 10rpx 30rpx rgba(239, 68, 68, 0.4);
+  letter-spacing: 2rpx;
+}
+
+.emergency-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(239, 68, 68, 0.3);
 }
 
 .card {
   background: white;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  border-radius: 30rpx;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 8rpx 24rpx rgba(251, 146, 60, 0.12);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 26rpx;
 }
 
 .card-title {
-  font-size: 32rpx;
-  font-weight: 700;
+  font-size: 34rpx;
+  font-weight: 800;
   color: #1f2937;
-  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.card-title::before {
+  content: '';
+  display: block;
+  width: 8rpx;
+  height: 34rpx;
+  background: #ea580c;
+  margin-right: 16rpx;
+  border-radius: 4rpx;
+}
+
+.dose-badge {
+  font-size: 22rpx;
+  color: #ea580c;
+  background: #fff7ed;
+  padding: 8rpx 18rpx;
+  border-radius: 24rpx;
+  font-weight: 700;
+  border: 1rpx solid #fed7aa;
 }
 
 .reminder-item {
   display: flex;
-  align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f3f4f6;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #fffaf5;
+  border: 1rpx solid #ffedd5;
+  border-radius: 24rpx;
+  margin-bottom: 16rpx;
 }
 
 .reminder-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
-.reminder-time {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #3b82f6;
-  width: 120rpx;
-  margin-right: 20rpx;
+.reminder-item.completed {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.reminder-time-pill {
+  min-width: 120rpx;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #ea580c;
+  background: white;
+  border: 1rpx solid #fed7aa;
+  border-radius: 18rpx;
+  padding: 10rpx 16rpx;
+}
+
+.reminder-time-pill.completed {
+  color: #94a3b8;
+  border-color: #cbd5e1;
+  background: #f8fafc;
 }
 
 .reminder-content {
-  font-size: 28rpx;
-  color: #374151;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.reminder-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+  gap: 14rpx;
+}
+
+.reminder-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.reminder-name.completed {
+  color: #94a3b8;
+}
+
+.reminder-count {
+  font-size: 22rpx;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 18rpx;
+  padding: 6rpx 14rpx;
+  font-weight: 700;
+}
+
+.reminder-count.done {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.reminder-dosage {
+  font-size: 24rpx;
+  color: #6b7280;
+  margin-bottom: 6rpx;
+}
+
+.reminder-times {
+  font-size: 22rpx;
+  color: #9ca3af;
+}
+
+.completed-toggle {
+  margin-top: 10rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 20rpx;
+  background: #f8fafc;
+  border: 1rpx solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completed-toggle-text {
+  font-size: 24rpx;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.completed-toggle-arrow {
+  font-size: 22rpx;
+  color: #94a3b8;
 }
 
 .empty-reminder {

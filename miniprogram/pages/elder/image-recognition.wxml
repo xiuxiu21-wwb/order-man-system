@@ -1,40 +1,56 @@
 <view class="container">
-  <view class="header">
-    <view class="title">📷 图片识别</view>
-    <view class="subtitle">上传图片，让我帮您看看</view>
+  <!-- 顶部导航栏 -->
+  <view class="nav-header">
+    <view class="nav-title">图片识别</view>
+    <view class="nav-subtitle">拍照或上传，让我帮您看看</view>
   </view>
 
-  <view class="image-preview" wx:if="{{selectedImage}}">
-    <image src="{{selectedImage}}" mode="aspectFit" class="preview-image"></image>
-  </view>
-
-  <view class="upload-placeholder" wx:else>
-    <view class="placeholder-icon">📸</view>
-    <view class="placeholder-text">请选择或拍摄一张图片</view>
-  </view>
-
-  <view class="action-buttons">
-    <button class="action-btn secondary" bindtap="chooseImage">
-      📁 选择图片
-    </button>
-    <button class="action-btn secondary" bindtap="takePhoto">
-      📷 拍照
-    </button>
-  </view>
-
-  <button 
-    class="recognize-btn" 
-    bindtap="recognizeImage" 
-    disabled="{{!selectedImage || loading}}"
-  >
-    {{loading ? '🔍 识别中...' : '🔍 开始识别'}}
-  </button>
-
-  <view class="result-card" wx:if="{{result}}">
-    <view class="result-header">
-      <view class="result-icon">✨</view>
-      <view class="result-title">识别结果</view>
+  <scroll-view scroll-y class="content-scroll">
+    <!-- 图片展示区 -->
+    <view class="preview-card {{selectedImage ? 'has-image' : ''}}">
+      <image wx:if="{{selectedImage}}" src="{{selectedImage}}" mode="aspectFill" class="preview-image" bindtap="previewImage"></image>
+      <view class="delete-btn" wx:if="{{selectedImage}}" catchtap="clearImage">✕</view>
+      
+      <view class="upload-placeholder" wx:if="{{!selectedImage}}" bindtap="showActionSheet">
+        <view class="placeholder-icon">📷</view>
+        <view class="placeholder-text">点击拍摄或选择图片</view>
+      </view>
     </view>
-    <view class="result-text">{{result}}</view>
-  </view>
+
+    <!-- 操作按钮区 -->
+    <view class="action-grid" wx:if="{{!selectedImage}}">
+      <view class="action-item" bindtap="takePhoto">
+        <view class="action-icon bg-orange">📸</view>
+        <text>拍照</text>
+      </view>
+      <view class="action-item" bindtap="chooseImage">
+        <view class="action-icon bg-blue">🖼️</view>
+        <text>相册</text>
+      </view>
+    </view>
+
+    <!-- 识别按钮 -->
+    <button 
+      class="recognize-btn {{loading ? 'loading' : ''}}" 
+      bindtap="recognizeImage" 
+      disabled="{{!selectedImage || loading}}"
+      wx:if="{{selectedImage}}"
+    >
+      {{loading ? '正在识别中...' : '开始识别'}}
+    </button>
+
+    <!-- 识别结果卡片 -->
+    <view class="result-card" wx:if="{{result}}">
+      <view class="result-header">
+        <view class="result-icon">✨</view>
+        <view class="result-title">识别结果</view>
+      </view>
+      <view class="result-content">
+        <text user-select="true">{{result}}</text>
+      </view>
+      <view class="result-footer">
+        <view class="copy-btn" bindtap="copyResult">复制结果</view>
+      </view>
+    </view>
+  </scroll-view>
 </view>

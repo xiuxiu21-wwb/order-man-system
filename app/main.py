@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import users, conversations, medications, locations, alerts, image_recognition, weather, verify_code, bindings, news, admin
 
 app = FastAPI(
-    title="认知障碍老人陪伴与防走失系统",
-    description="为认知障碍老人提供陪伴、监测和安全保障的智能系统",
+    title="家护伴",
+    description="为老人提供陪伴、监测和安全保障的智能系统",
     version="1.0.0"
 )
 
@@ -33,7 +33,7 @@ app.include_router(admin.router, prefix="/api")
 
 @app.get("/")
 def read_root():
-    return {"message": "认知障碍老人陪伴与防走失系统 API", "docs": "/docs"}
+    return {"message": "家护伴 API", "docs": "/docs"}
 
 @app.get("/api/test")
 def test_api():

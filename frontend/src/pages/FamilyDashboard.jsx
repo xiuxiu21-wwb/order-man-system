@@ -69,7 +69,7 @@ function FamilyDashboard() {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-primary text-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-xl font-bold">认知障碍老人监护系统</h1>
+          <h1 className="text-xl font-bold">家护伴 - 监护系统</h1>
           <div className="flex items-center space-x-4">
             <span className="text-sm">欢迎，张大爷子女</span>
             <button

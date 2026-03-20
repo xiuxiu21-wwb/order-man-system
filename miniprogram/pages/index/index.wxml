@@ -1,19 +1,46 @@
+<!-- 顶部橙色区域 -->
 <view class="container">
-  <view class="header">
-    <view class="logo">🧓</view>
-    <view class="title">认知障碍老人陪伴系统</view>
-    <view class="subtitle">请选择您的身份</view>
+  <view class="header-content">
+    <view class="logo-icon">🏠</view>
+    <view class="app-title">家护伴 - 老人陪伴与防走失系统</view>
+    <view class="app-slogan">温暖陪伴 · 安全守护</view>
   </view>
 
-  <view class="card" bindtap="goToElder">
-    <view class="card-icon">👴</view>
-    <view class="card-title">大爷端</view>
-    <view class="card-desc">智能陪伴、服药提醒、一键求助</view>
+  <!-- 白色卡片区域 -->
+  <view class="card-container">
+    <view class="section-title">选择身份进入</view>
+    
+    <view class="card-grid">
+      <view class="role-card" bindtap="goToElder">
+        <view class="role-icon-bg">
+          <view class="role-emoji">👴</view>
+        </view>
+        <view class="role-name">老人端</view>
+      </view>
+      
+      <view class="role-card" bindtap="goToFamily">
+        <view class="role-icon-bg family">
+          <view class="role-emoji">👨‍👩‍👧</view>
+        </view>
+        <view class="role-name">子女端</view>
+      </view>
+    </view>
+    
+    <view class="divider-box">
+      <view class="line"></view>
+      <view class="text">或</view>
+      <view class="line"></view>
+    </view>
+    
+    <view class="action-links">
+      <view class="link-item primary" bindtap="goToLogin">账号密码登录</view>
+      <view class="link-item secondary" bindtap="goToRegister">注册新账号 →</view>
+    </view>
   </view>
 
-  <view class="card" bindtap="goToFamily">
-    <view class="card-icon">👨‍👩‍👧</view>
-    <view class="card-title">子女端</view>
-    <view class="card-desc">实时定位、告警查看、轨迹回放</view>
+  <!-- 底部版权 -->
+  <view class="footer-info">
+    <view class="copyright">© 2026 家护伴</view>
+    <view class="slogan">关爱老人 · 守护健康</view>
   </view>
 </view>

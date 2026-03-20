@@ -63,7 +63,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         phone=user.phone,
         email=user.email,
         user_type=user.user_type,
-        elder_uid=elder_uid
+        elder_uid=elder_uid,
+        blood_type=user.blood_type,
+        emergency_contact=user.emergency_contact,
+        address=user.address
     )
     db.add(db_user)
     db.commit()
@@ -129,7 +132,10 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
             "avatar": db_user.avatar,
             "is_active": db_user.is_active,
             "last_login": db_user.last_login,
-            "created_at": db_user.created_at
+            "created_at": db_user.created_at,
+            "blood_type": db_user.blood_type,
+            "emergency_contact": db_user.emergency_contact,
+            "address": db_user.address
         }
     }
 
@@ -163,6 +169,12 @@ def update_current_user(
         current_user.email = user_update.email
     if user_update.avatar is not None:
         current_user.avatar = user_update.avatar
+    if user_update.blood_type is not None:
+        current_user.blood_type = user_update.blood_type
+    if user_update.emergency_contact is not None:
+        current_user.emergency_contact = user_update.emergency_contact
+    if user_update.address is not None:
+        current_user.address = user_update.address
     
     db.commit()
     db.refresh(current_user)

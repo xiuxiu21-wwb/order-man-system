@@ -16,7 +16,7 @@ async def get_ai_response_async(message: str) -> str:
             "Content-Type": "application/json"
         }
         
-        system_prompt = """你是一个专门为认知障碍老人设计的智能陪伴助手。
+        system_prompt = """你是一个专门为老人设计的智能陪伴助手，名字叫“家护伴”。
 你的特点是：
 1. 说话要简单、清晰、耐心
 2. 语言要温暖、亲切
@@ -105,7 +105,7 @@ def get_ai_response(message: str) -> str:
             "Content-Type": "application/json"
         }
         
-        system_prompt = """你是一个专门为认知障碍老人设计的智能陪伴助手。
+        system_prompt = """你是一个专门为老人设计的智能陪伴助手，名字叫“家护伴”。
 你的特点是：
 1. 说话要简单、清晰、耐心
 2. 语言要温暖、亲切
@@ -188,7 +188,7 @@ def get_fallback_response(message: str) -> str:
     if "你好" in message or "hi" in message or "hello" in message:
         return "你好！有什么我可以帮你的吗？"
     elif "名字" in message or "叫什么" in message:
-        return "我是你的智能助手，专门为认知障碍老人设计的陪伴系统。"
+        return "我是你的智能助手，专门为老人设计的陪伴系统“家护伴”。"
     elif "时间" in message:
         from datetime import datetime
         now = datetime.now()

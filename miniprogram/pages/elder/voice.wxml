@@ -1,36 +1,87 @@
 <view class="container">
-  <view class="header">
-    <view class="title">🎤 AI 语音陪伴</view>
+  <!-- 背景图片 -->
+  <image class="background-image" src="/images/background.jpg" mode="aspectFill" />
+  
+  <!-- 顶部导航栏 (仿 iOS 风格) -->
+  <view class="nav-header">
+    <view class="nav-title">AI 语音陪伴</view>
+    <view class="nav-status">
+      <view class="status-dot {{isTyping ? 'typing' : 'online'}}"></view>
+      <text class="status-text">{{isTyping ? '对方正在输入...' : '在线'}}</text>
+    </view>
   </view>
 
-  <scroll-view scroll-y="true" scroll-into-view="{{scrollToView}}" class="message-area">
-    <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}" class="message {{item.isUser ? 'user' : 'ai'}}">
-      <view class="avatar">{{item.isUser ? '👴' : '🤖'}}</view>
-      <view class="bubble">
-        <view class="text">{{item.text}}</view>
-        <view class="time">{{item.time}}</view>
-      </view>
+  <scroll-view scroll-y="true" scroll-into-view="{{scrollToView}}" class="message-area" enable-flex="true">
+    <view class="chat-placeholder" wx:if="{{messages.length === 0}}">
+      <view class="placeholder-icon">🤖</view>
+      <view class="placeholder-text">你好！我是你的 AI 助手</view>
+      <view class="placeholder-sub">我可以陪你聊天、讲故事、查天气...</view>
     </view>
-    <view wx:if="{{isTyping}}" class="message ai">
-      <view class="avatar">🤖</view>
-      <view class="bubble">
-        <view class="typing">
-          <view class="dot"></view>
-          <view class="dot"></view>
-          <view class="dot"></view>
+
+    <block wx:for="{{messages}}" wx:key="id">
+      <view class="message-wrapper {{item.isUser ? 'user' : 'ai'}}" id="msg-{{item.id}}">
+        <view class="avatar-box" wx:if="{{!item.isUser}}">
+          <view class="avatar-img">🤖</view>
+        </view>
+        
+        <view class="message-content">
+          <view class="bubble">
+            <text user-select="true">{{item.text}}</text>
+          </view>
+          <view class="meta-info">{{item.time}}</view>
+        </view>
+
+        <view class="avatar-box" wx:if="{{item.isUser}}">
+          <view class="avatar-img user">👴</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 对方正在输入提示 -->
+    <view wx:if="{{isTyping}}" class="message-wrapper ai typing-wrapper">
+      <view class="avatar-box">
+        <view class="avatar-img">🤖</view>
+      </view>
+      <view class="message-content">
+        <view class="bubble typing-bubble">
+          <view class="typing-dot"></view>
+          <view class="typing-dot"></view>
+          <view class="typing-dot"></view>
         </view>
       </view>
     </view>
+    
+    <!-- 底部占位，防止内容被输入框遮挡 -->
+    <view style="height: 20rpx;"></view>
   </scroll-view>
 
-  <view class="quick-area">
-    <view class="quick-btn" wx:for="{{quickQuestions}}" wx:key="index" bindtap="sendQuick" data-text="{{item}}">
-      {{item}}
-    </view>
-  </view>
+  <!-- 底部操作区 -->
+  <view class="input-area">
+    <!-- 快捷提问区 -->
+    <scroll-view scroll-x class="quick-scroll" wx:if="{{!isTyping}}">
+      <view class="quick-list">
+        <view class="quick-pill" wx:for="{{quickQuestions}}" wx:key="index" bindtap="sendQuick" data-text="{{item}}">
+          {{item}}
+        </view>
+      </view>
+    </scroll-view>
 
-  <view class="footer">
-    <input class="input-box" placeholder="说点什么吧..." value="{{inputText}}" bindinput="onInput" bindconfirm="sendMessage" confirm-type="send"/>
-    <button class="send" bindtap="sendMessage">发送</button>
+    <view class="input-bar">
+      <view class="input-wrapper">
+        <input 
+          class="chat-input" 
+          placeholder="说点什么..." 
+          placeholder-class="input-placeholder"
+          value="{{inputText}}" 
+          bindinput="onInput" 
+          bindconfirm="sendMessage" 
+          confirm-type="send"
+          cursor-spacing="20"
+        />
+      </view>
+      <view class="send-btn {{inputText ? 'active' : ''}}" bindtap="sendMessage">
+        <view class="send-icon">↑</view>
+      </view>
+    </view>
   </view>
 </view>

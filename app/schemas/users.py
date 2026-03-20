@@ -8,6 +8,9 @@ class UserBase(BaseModel):
     phone: Optional[str] = None
     email: Optional[str] = None
     user_type: str  # elder, family
+    blood_type: Optional[str] = None  # 血型
+    emergency_contact: Optional[str] = None  # 紧急联系电话
+    address: Optional[str] = None  # 家庭地址
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
@@ -58,6 +61,9 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     email: Optional[str] = None
     avatar: Optional[str] = None
+    blood_type: Optional[str] = None
+    emergency_contact: Optional[str] = None
+    address: Optional[str] = None
 
 class ChangePassword(BaseModel):
     old_password: str

@@ -17,6 +17,9 @@ class User(Base):
     elder_uid = Column(String(36), unique=True, index=True, nullable=True)  # 老人专属 UID
     avatar = Column(String(200), nullable=True)
     is_active = Column(Boolean, default=True)
+    blood_type = Column(String(20), nullable=True)  # 血型
+    emergency_contact = Column(String(20), nullable=True)  # 紧急联系电话
+    address = Column(String(200), nullable=True)  # 家庭地址
     last_login = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

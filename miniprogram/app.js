@@ -3,7 +3,7 @@ App({
     userInfo: null,
     userType: null,
     elderUid: null,
-    apiBaseUrl: 'http://172.23.229.165:8000/api',
+    apiBaseUrl: 'http://172.23.227.243:8000/api',
     hasEmergency: false,
     emergencyTime: ''
   },

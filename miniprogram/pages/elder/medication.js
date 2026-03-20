@@ -7,9 +7,12 @@ Page({
     showModal: false,
     newMed: {
       name: '',
-      time: '08:00',
-      dosage: ''
+      times: [], // 改为数组
+      dosage: '',
+      startDate: '',
+      endDate: '' // 改为结束日期
     },
+    today: new Date().toISOString().split('T')[0],
     elderId: null
   },
 
@@ -75,54 +78,124 @@ Page({
   loadMedications() {
     const that = this
     const elderId = this.data.elderId
-    
-    console.log('loadMedications - elderId:', elderId)
-    
+
     if (!elderId) {
-      console.log('未找到 elderId，使用本地数据')
       this.loadLocalMedications()
       return
     }
 
     wx.request({
-      url: app.globalData.apiBaseUrl + '/medications/elder/' + elderId,
+      url: app.globalData.apiBaseUrl + '/medications/elder/' + elderId + '/daily',
       method: 'GET',
+      data: { date_str: this.data.today },
       success(res) {
-        console.log('加载药品列表成功:', res.data)
-        if (res.data && Array.isArray(res.data)) {
-          const medications = res.data.map(item => ({
+        if (res.data && res.data.success && Array.isArray(res.data.data)) {
+          const medications = res.data.data.map(item => ({
             id: item.id,
             name: item.name,
-            time: item.times || '08:00',
-            dosage: item.dosage || item.frequency || '',
-            taken: false,
+            times: item.times || ['08:00'],
+            dosage: item.dosage || '',
+            todayStatus: item.todayStatus || [],
+            todayRemainingCount: item.todayRemainingCount || 0,
+            remainingDays: item.remainingDays,
             isBackend: true
           }))
           that.setData({ medications })
           that.updateProgress()
+        } else {
+          that.loadLocalMedications()
         }
       },
       fail(err) {
-        console.error('加载药品列表失败:', err)
         that.loadLocalMedications()
       }
     })
   },
 
   loadLocalMedications() {
-    const localMeds = [
-      { id: 1, name: '降压药', time: '08:00', dosage: '早餐后服用 1 片', taken: false },
-      { id: 2, name: '降糖药', time: '12:00', dosage: '午餐后服用 1 片', taken: false },
-      { id: 3, name: '阿司匹林', time: '18:00', dosage: '晚餐后服用 1 片', taken: false }
-    ]
-    this.setData({ medications: localMeds })
+    let localMeds = wx.getStorageSync('localMedications') || []
+    const todayStr = new Date().toISOString().split('T')[0] // 使用 ISO 日期格式 yyyy-mm-dd
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+
+    // 处理数据并筛选
+    const activeMeds = localMeds.map(med => {
+      // 兼容旧数据: 将 time 转为 times 数组
+      if (!med.times && med.time) {
+        med.times = [med.time]
+      }
+      // 兼容旧数据: 初始化 takenRecords
+      if (!med.takenRecords) {
+        med.takenRecords = {}
+      }
+      // 兼容旧数据: 如果有 lastTakenDate 和 taken，迁移到 takenRecords
+      if (med.lastTakenDate && med.taken && !med.takenRecords[med.lastTakenDate]) {
+        // 旧数据通常只有一个时间点，所以无法精确知道是哪个时间，假设所有时间都已服用
+        // 或者简单地忽略旧状态，从今天开始新记录
+      }
+
+      // 获取今日服用状态
+      const todayRecord = med.takenRecords[todayStr] || {}
+      med.todayStatus = med.times.map(t => ({
+        time: t,
+        taken: !!todayRecord[t]
+      }))
+      
+      // 计算今日剩余次数
+      med.todayRemainingCount = med.todayStatus.filter(s => !s.taken).length
+
+      // 计算剩余天数
+      if (med.startDate && med.duration) {
+        const start = new Date(med.startDate)
+        start.setHours(0, 0, 0, 0)
+        
+        const end = new Date(start)
+        end.setDate(start.getDate() + parseInt(med.duration))
+        
+        const diffTime = end.getTime() - now.getTime()
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        
+        med.remainingDays = diffDays > 0 ? diffDays : 0
+      }
+      
+      return med
+    }).filter(med => {
+      // 筛选在有效期内的药品
+      if (!med.startDate || !med.duration) return true
+      const start = new Date(med.startDate)
+      start.setHours(0, 0, 0, 0)
+      
+      const end = new Date(start)
+      end.setDate(start.getDate() + parseInt(med.duration))
+      
+      return now >= start && now < end
+    })
+
+    // 保存可能的数据结构更新 (兼容性处理)
+    wx.setStorageSync('localMedications', localMeds)
+
+    // 排序：按最早的未服用时间排序，如果都服用了按最早时间排序
+    activeMeds.sort((a, b) => {
+       const aTime = a.times[0] || '00:00'
+       const bTime = b.times[0] || '00:00'
+       return aTime.localeCompare(bTime)
+    })
+    
+    this.setData({ medications: activeMeds })
     this.updateProgress()
   },
 
   showAddModal() {
+    const today = new Date().toISOString().split('T')[0]
     this.setData({
       showModal: true,
-      newMed: { name: '', time: '08:00', dosage: '' }
+      newMed: { 
+        name: '', 
+        times: ['08:00'], // 默认一个时间
+        dosage: '', 
+        startDate: today,
+        endDate: '' 
+      }
     })
   },
 
@@ -136,23 +209,58 @@ Page({
     this.setData({ 'newMed.name': e.detail.value })
   },
 
-  onTimeChange(e) {
-    this.setData({ 'newMed.time': e.detail.value })
-  },
-
   onInputDosage(e) {
     this.setData({ 'newMed.dosage': e.detail.value })
   },
 
+  onAddTime(e) {
+    const time = e.detail.value
+    const times = this.data.newMed.times
+    if (!times.includes(time)) {
+      times.push(time)
+      times.sort()
+      this.setData({ 'newMed.times': times })
+    } else {
+      wx.showToast({ title: '时间已存在', icon: 'none' })
+    }
+  },
+
+  removeTime(e) {
+    const index = e.currentTarget.dataset.index
+    const times = this.data.newMed.times
+    times.splice(index, 1)
+    this.setData({ 'newMed.times': times })
+  },
+
+  onStartDateChange(e) {
+    this.setData({ 'newMed.startDate': e.detail.value })
+  },
+
+  onEndDateChange(e) {
+    this.setData({ 'newMed.endDate': e.detail.value })
+  },
+
   confirmAdd() {
-    const { name, time, dosage } = this.data.newMed
+    const { name, times, dosage, startDate, endDate } = this.data.newMed
     
     if (!name || !name.trim()) {
       wx.showToast({ title: '请输入药品名称', icon: 'none' })
       return
     }
-    if (!time) {
-      wx.showToast({ title: '请选择服用时间', icon: 'none' })
+    if (times.length === 0) {
+      wx.showToast({ title: '请至少添加一个服用时间', icon: 'none' })
+      return
+    }
+    if (!startDate) {
+      wx.showToast({ title: '请选择开始日期', icon: 'none' })
+      return
+    }
+    if (!endDate) {
+      wx.showToast({ title: '请选择结束日期', icon: 'none' })
+      return
+    }
+    if (endDate < startDate) {
+      wx.showToast({ title: '结束日期不能早于开始日期', icon: 'none' })
       return
     }
     if (!dosage || !dosage.trim()) {
@@ -160,18 +268,22 @@ Page({
       return
     }
 
+    // 计算持续天数 (用于后端兼容或逻辑计算)
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const diffTime = Math.abs(end - start)
+    const duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1 
+
     if (this.data.elderId) {
-      this.addMedicationToBackend(name.trim(), time, dosage.trim())
-    } else {
-      this.addMedicationLocal(name.trim(), time, dosage.trim())
+      this.addMedicationToBackend(name.trim(), times, dosage.trim(), startDate, endDate)
+      return
     }
+    this.addMedicationLocal(name.trim(), times, dosage.trim(), duration, startDate, endDate)
   },
 
-  addMedicationToBackend(name, time, dosage) {
+  addMedicationToBackend(name, times, dosage, startDateStr, endDateStr) {
     const that = this
-    
-    console.log('添加药品到后端 - elderId:', this.data.elderId)
-    
+
     wx.request({
       url: app.globalData.apiBaseUrl + '/medications/elder',
       method: 'POST',
@@ -180,13 +292,12 @@ Page({
         name: name,
         dosage: dosage,
         frequency: 'daily',
-        times: time,
-        start_date: new Date().toISOString().split('T')[0] + 'T00:00:00',
-        end_date: null
+        times: times.join(','),
+        start_date: `${startDateStr}T00:00:00`,
+        end_date: `${endDateStr}T00:00:00`
       },
       header: { 'Content-Type': 'application/json' },
       success(res) {
-        console.log('添加药品成功:', res.data)
         wx.showToast({ title: '添加成功', icon: 'success' })
         that.hideModal()
         that.loadMedications()
@@ -198,18 +309,26 @@ Page({
     })
   },
 
-  addMedicationLocal(name, time, dosage) {
+  addMedicationLocal(name, times, dosage, duration, startDate, endDate) {
     const newMedication = {
       id: Date.now(),
       name: name,
-      time: time,
+      times: times, // 数组
       dosage: dosage,
-      taken: false,
+      duration: duration,
+      startDate: startDate,
+      endDate: endDate,
+      // 记录每天每个时间点的服用状态
+      // 结构: { "2023-10-27": { "08:00": true, "12:00": false } }
+      takenRecords: {}, 
       isBackend: false
     }
-    const medications = [...this.data.medications, newMedication]
-    this.setData({ medications })
-    this.updateProgress()
+    
+    let localMeds = wx.getStorageSync('localMedications') || []
+    localMeds.push(newMedication)
+    wx.setStorageSync('localMedications', localMeds)
+    
+    this.loadLocalMedications()
     this.hideModal()
     wx.showToast({ title: '添加成功', icon: 'success' })
   },
@@ -252,28 +371,73 @@ Page({
   },
 
   deleteMedicationLocal(id) {
-    const medications = this.data.medications.filter(m => m.id !== id)
-    this.setData({ medications })
-    this.updateProgress()
+    let localMeds = wx.getStorageSync('localMedications') || []
+    localMeds = localMeds.filter(m => m.id !== id)
+    wx.setStorageSync('localMedications', localMeds)
+    
+    this.loadLocalMedications()
     wx.showToast({ title: '删除成功', icon: 'success' })
   },
 
   takeMedication(e) {
     const id = e.currentTarget.dataset.id
-    const medications = this.data.medications.map(med => {
+    const time = e.currentTarget.dataset.time
+    const todayStr = new Date().toISOString().split('T')[0]
+
+    if (this.data.elderId) {
+      wx.request({
+        url: app.globalData.apiBaseUrl + '/medications/elder/record',
+        method: 'POST',
+        data: {
+          elder_id: this.data.elderId,
+          medication_id: id,
+          scheduled_date: todayStr,
+          scheduled_time: time
+        },
+        header: { 'Content-Type': 'application/json' },
+        success: () => {
+          this.loadMedications()
+          wx.showToast({ title: '服药记录已保存！', icon: 'success' })
+        },
+        fail: () => {
+          wx.showToast({ title: '同步失败，请重试', icon: 'none' })
+        }
+      })
+      return
+    }
+
+    let localMeds = wx.getStorageSync('localMedications') || []
+    localMeds = localMeds.map(med => {
       if (med.id === id) {
-        return { ...med, taken: true }
+        if (!med.takenRecords) med.takenRecords = {}
+        if (!med.takenRecords[todayStr]) med.takenRecords[todayStr] = {}
+        med.takenRecords[todayStr][time] = true
       }
       return med
     })
-    this.setData({ medications })
-    this.updateProgress()
+    wx.setStorageSync('localMedications', localMeds)
+    this.loadLocalMedications()
     wx.showToast({ title: '服药记录已保存！', icon: 'success' })
   },
 
   updateProgress() {
-    const takenCount = this.data.medications.filter(m => m.taken).length
-    const totalCount = this.data.medications.length
+    const todayStr = new Date().toISOString().split('T')[0]
+    let totalCount = 0
+    let takenCount = 0
+    
+    this.data.medications.forEach(med => {
+      const times = med.times || []
+      totalCount += times.length
+      if (med.todayStatus && Array.isArray(med.todayStatus)) {
+        takenCount += med.todayStatus.filter(item => item.taken).length
+      } else {
+        const todayRecord = med.takenRecords && med.takenRecords[todayStr] ? med.takenRecords[todayStr] : {}
+        times.forEach(t => {
+          if (todayRecord[t]) takenCount++
+        })
+      }
+    })
+    
     const progressPercent = totalCount > 0 ? Math.round((takenCount / totalCount) * 100) : 0
     this.setData({ takenCount, totalCount, progressPercent })
   }

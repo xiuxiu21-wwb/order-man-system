@@ -1,0 +1,63 @@
+<view class="container">
+  <!-- 顶部导航栏 -->
+  <view class="nav-header">
+    <view class="nav-title">日历</view>
+    <view class="nav-subtitle">{{year}}年{{month}}月</view>
+  </view>
+
+  <!-- 月份切换 -->
+  <view class="calendar-header">
+    <view class="month-switch">
+      <view class="switch-btn" bindtap="prevMonth">
+        <text class="arrow">◀</text>
+      </view>
+      <view class="current-month">{{year}}年 {{month}}月</view>
+      <view class="switch-btn" bindtap="nextMonth">
+        <text class="arrow">▶</text>
+      </view>
+    </view>
+    <view class="today-btn" bindtap="goToToday">今天</view>
+  </view>
+
+  <!-- 星期表头 -->
+  <view class="week-header">
+    <view class="week-day" wx:for="{{weekDays}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <!-- 日历主体 -->
+  <view class="calendar-body">
+    <view class="day-cell {{item.type}} {{item.isToday ? 'today' : ''}} {{item.selected ? 'selected' : ''}}" 
+          wx:for="{{days}}" 
+          wx:key="date"
+          bindtap="selectDate"
+          data-date="{{item.date}}"
+          data-type="{{item.type}}">
+      <view class="day-text">{{item.day}}</view>
+      <view class="festival-text {{item.festival ? 'festival' : ''}}">{{item.festival || item.lunar}}</view>
+      <view class="dot" wx:if="{{item.hasEvent}}"></view>
+    </view>
+  </view>
+
+  <!-- 日程详情 (选中日期) -->
+  <view class="schedule-panel">
+    <view class="panel-header">
+      <view class="panel-date">{{selectedDateStr}}</view>
+      <view class="panel-lunar">{{lunarDateStr}}</view>
+    </view>
+    
+    <view class="event-list">
+      <view class="empty-event" wx:if="{{events.length === 0}}">
+        <view class="empty-icon">📅</view>
+        <view class="empty-text">今天没有安排日程</view>
+      </view>
+      
+      <view class="event-item" wx:for="{{events}}" wx:key="id">
+        <view class="event-time">{{item.time}}</view>
+        <view class="event-content">
+          <view class="event-title">{{item.title}}</view>
+          <view class="event-desc" wx:if="{{item.desc}}">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

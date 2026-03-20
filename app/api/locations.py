@@ -1,81 +1,72 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import desc
-from typing import List
-from datetime import datetime, timedelta
-from app.db.session import get_db
-from app.db.models import Location, User
-from app.schemas.locations import LocationCreate, LocationResponse, LocationHistory
-from app.core.security import get_current_user
-from app.services.map_service import map_service
+"""
+位置服务 API
+"""
+from fastapi import APIRouter
+from pydantic import BaseModel
+import httpx
+from app.core.config import settings
 
 router = APIRouter()
 
-@router.post("/", response_model=LocationResponse)
-def create_location(location: LocationCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # 自动获取地址信息
-    address = location.address
-    if not address:
-        try:
-            result = map_service.reverse_geocode(location.latitude, location.longitude)
-            if result.get("status") == "1":
-                address = result.get("regeocode", {}).get("formatted_address", "")
-        except Exception as e:
-            print(f"获取地址失败: {e}")
+class LocationRequest(BaseModel):
+    latitude: float
+    longitude: float
+
+
+@router.post("/location/city")
+async def get_city_from_location(req: LocationRequest):
+    """
+    根据经纬度获取城市名称
     
-    # 创建位置记录
-    db_location = Location(
-        user_id=current_user.id,
-        latitude=location.latitude,
-        longitude=location.longitude,
-        accuracy=location.accuracy,
-        address=address
-    )
-    db.add(db_location)
-    db.commit()
-    db.refresh(db_location)
-    return db_location
-
-@router.get("/current", response_model=LocationResponse)
-def get_current_location(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # 获取用户最新位置
-    location = db.query(Location).filter(Location.user_id == current_user.id).order_by(desc(Location.timestamp)).first()
-    if not location:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="未找到位置信息"
-        )
-    return location
-
-@router.get("/history", response_model=List[LocationHistory])
-def get_location_history(
-    start_time: datetime,
-    end_time: datetime,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    # 获取指定时间范围内的位置历史
-    locations = db.query(Location).filter(
-        Location.user_id == current_user.id,
-        Location.timestamp >= start_time,
-        Location.timestamp <= end_time
-    ).order_by(Location.timestamp).all()
-    return locations
-
-@router.get("/family/{family_member_id}", response_model=LocationResponse)
-def get_family_member_location(
-    family_member_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    # 验证是否为家庭成员
-    # 这里需要添加家庭关系验证逻辑
-    
-    # 获取家庭成员最新位置
-    location = db.query(Location).filter(Location.user_id == family_member_id).order_by(desc(Location.timestamp)).first()
-    if not location:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="未找到位置信息"
-        )
-    return location
+    Args:
+        latitude: 纬度
+        longitude: 经度
+        
+    Returns:
+        dict: 城市名称
+    """
+    try:
+        # 使用高德地图逆地理编码 API
+        api_key = settings.AMAP_API_KEY
+        url = "https://restapi.amap.com/v3/geocode/regeo"
+        
+        params = {
+            "location": f"{req.longitude},{req.latitude}",
+            "key": api_key,
+            "extensions": "base"
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params)
+            result = response.json()
+            
+            print(f"高德地图 API 响应：{result}")
+            
+            if result.get('status') == '1' and result.get('regeocode'):
+                city = result['regeocode']['addressComponent'].get('city', '北京')
+                # 如果是直辖市，直接取城市名
+                if city in ['北京市', '上海市', '天津市', '重庆市']:
+                    city = city.replace('市', '')
+                
+                return {
+                    "success": True,
+                    "city": city,
+                    "province": result['regeocode']['addressComponent'].get('province', '')
+                }
+            else:
+                print(f"高德地图 API 调用失败：{result}")
+                return {
+                    "success": False,
+                    "city": "北京",
+                    "message": result.get('info', '无法获取城市信息')
+                }
+                
+    except Exception as e:
+        print(f"获取城市失败：{e}")
+        import traceback
+        print(traceback.format_exc())
+        return {
+            "success": False,
+            "city": "北京",
+            "message": str(e)
+        }

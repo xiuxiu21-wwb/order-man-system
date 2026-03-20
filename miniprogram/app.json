@@ -4,6 +4,8 @@
     "pages/login/login",
     "pages/register/register",
     "pages/elder/dashboard",
+    "pages/profile/profile",
+    "pages/calendar/calendar",
     "pages/elder/voice",
     "pages/elder/medication",
     "pages/elder/image-recognition",
@@ -17,8 +19,8 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#3b82f6",
-    "navigationBarTitleText": "认知障碍老人陪伴系统",
+    "navigationBarBackgroundColor": "#ff8c00",
+    "navigationBarTitleText": "家护伴",
     "navigationBarTextStyle": "white"
   },
   "permission": {
@@ -27,7 +29,8 @@
     }
   },
   "requiredPrivateInfos": [
-    "getLocation"
+    "getLocation",
+    "chooseLocation"
   ],
   "style": "v2",
   "sitemapLocation": "sitemap.json"

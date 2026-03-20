@@ -1,0 +1,262 @@
+page {
+  background: #f8fafc;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部导航 */
+.nav-header {
+  padding: 100rpx 40rpx 40rpx;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+}
+
+.nav-title {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #1f2937;
+  letter-spacing: 2rpx;
+}
+
+.nav-subtitle {
+  font-size: 32rpx;
+  color: #f97316;
+  font-weight: 700;
+}
+
+/* 日历头部 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 40rpx;
+  background: white;
+}
+
+.month-switch {
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+}
+
+.switch-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #64748b;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.switch-btn:active {
+  background: #fb923c;
+  color: white;
+}
+
+.current-month {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.today-btn {
+  font-size: 28rpx;
+  color: #f97316;
+  font-weight: 700;
+  padding: 10rpx 24rpx;
+  background: #fff7ed;
+  border-radius: 30rpx;
+}
+
+/* 星期表头 */
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  padding: 20rpx 0;
+  background: white;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.week-day {
+  font-size: 26rpx;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* 日历主体 */
+.calendar-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 20rpx;
+  background: white;
+  min-height: 600rpx;
+}
+
+.day-cell {
+  height: 90rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+  margin: 6rpx;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.day-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.festival-text {
+  font-size: 20rpx;
+  color: #94a3b8;
+  margin-top: 4rpx;
+  line-height: 1;
+}
+
+.festival-text.festival {
+  color: #ef4444;
+}
+
+.day-cell.selected .festival-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.day-cell.prev-month, .day-cell.next-month {
+  opacity: 0.3;
+}
+
+.day-cell.today {
+  background: #fff7ed;
+  color: #f97316;
+  border: 2rpx solid #fdba74;
+}
+
+.day-cell.selected {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  box-shadow: 0 8rpx 20rpx rgba(234, 88, 12, 0.3);
+  transform: scale(1.05);
+}
+
+.day-cell.selected .day-text {
+  color: white;
+}
+
+.dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #ef4444;
+  margin-top: 6rpx;
+}
+
+.day-cell.selected .dot {
+  background: white;
+}
+
+/* 日程面板 */
+.schedule-panel {
+  flex: 1;
+  background: white;
+  margin-top: 20rpx;
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  padding: 40rpx;
+  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.05);
+}
+
+.panel-header {
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #f1f5f9;
+}
+
+.panel-date {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 8rpx;
+}
+
+.panel-lunar {
+  font-size: 26rpx;
+  color: #94a3b8;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.empty-event {
+  text-align: center;
+  padding: 60rpx 0;
+  color: #94a3b8;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+}
+
+.event-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 24rpx;
+  background: #f8fafc;
+  border-radius: 24rpx;
+  border-left: 8rpx solid #f97316;
+}
+
+.event-time {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #f97316;
+  margin-right: 30rpx;
+  min-width: 100rpx;
+}
+
+.event-content {
+  flex: 1;
+}
+
+.event-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 6rpx;
+}
+
+.event-desc {
+  font-size: 24rpx;
+  color: #64748b;
+}

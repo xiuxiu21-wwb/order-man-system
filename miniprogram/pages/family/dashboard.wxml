@@ -33,30 +33,52 @@
       <view class="action-title">告警中心</view>
       <view class="alert-badge" wx:if="{{alertCount > 0}}">{{alertCount}}</view>
     </view>
+    <view class="action-card" bindtap="goToProfile">
+      <view class="action-icon">👤</view>
+      <view class="action-title">老人信息</view>
+    </view>
   </view>
 
   <view class="card">
-    <view class="card-title">今日动态</view>
-    <view class="timeline-item">
-      <view class="timeline-dot"></view>
-      <view class="timeline-content">
-        <view class="timeline-time">08:05</view>
-        <view class="timeline-text">已完成早餐服药</view>
+    <view class="card-head-row">
+      <view class="card-title">服药同步</view>
+      <view class="dose-badge" wx:if="{{familyPendingMedications.length + familyCompletedMedications.length > 0}}">
+        已完成 {{familyMedicationCompletedDose}} 次 · 剩余 {{familyMedicationRemainingDose}} 次
       </view>
     </view>
-    <view class="timeline-item">
-      <view class="timeline-dot"></view>
-      <view class="timeline-content">
-        <view class="timeline-time">09:30</view>
-        <view class="timeline-text">出门散步</view>
+
+    <view class="med-item" wx:for="{{familyPendingMedications}}" wx:key="id">
+      <view class="med-time">{{item.nextTime}}</view>
+      <view class="med-main">
+        <view class="med-top">
+          <view class="med-name">{{item.name}}</view>
+          <view class="med-tag">剩 {{item.remainingTimes}} 次</view>
+        </view>
+        <view class="med-dosage">{{item.dosage}}</view>
+        <view class="med-times">时间：{{item.timesText}}</view>
       </view>
     </view>
-    <view class="timeline-item">
-      <view class="timeline-dot"></view>
-      <view class="timeline-content">
-        <view class="timeline-time">11:00</view>
-        <view class="timeline-text">回到家中</view>
+
+    <view class="completed-toggle" wx:if="{{familyCompletedMedications.length > 0}}" bindtap="toggleCompletedMedications">
+      <text class="completed-toggle-text">已完成 {{familyCompletedMedications.length}} 项</text>
+      <text class="completed-toggle-arrow">{{showCompletedMedications ? '收起' : '展开'}}</text>
+    </view>
+
+    <view class="med-item completed" wx:if="{{showCompletedMedications}}" wx:for="{{familyCompletedMedications}}" wx:key="id">
+      <view class="med-time completed">{{item.nextTime}}</view>
+      <view class="med-main">
+        <view class="med-top">
+          <view class="med-name completed">{{item.name}}</view>
+          <view class="med-tag done">今日完成</view>
+        </view>
+        <view class="med-dosage">{{item.dosage}}</view>
+        <view class="med-times">时间：{{item.timesText}}</view>
       </view>
+    </view>
+
+    <view class="empty-reminder" wx:if="{{familyPendingMedications.length + familyCompletedMedications.length === 0}}">
+      <view class="empty-text">暂无服药同步数据</view>
+      <view class="empty-hint">老人端记录后会自动显示在这里</view>
     </view>
   </view>
 

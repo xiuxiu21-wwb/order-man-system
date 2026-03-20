@@ -12,7 +12,12 @@ Page({
     showUidInput: false,
     verifyCode: '',
     verifyCodeImage: '',
-    verifyCodeId: ''
+    verifyCodeId: '',
+    bloodType: '',
+    bloodTypeIndex: -1,
+    bloodTypes: ['A型', 'B型', 'AB型', 'O型', 'Rh阴性', '其他'],
+    emergencyContact: '',
+    address: ''
   },
 
   onLoad(options) {
@@ -80,6 +85,22 @@ Page({
     this.setData({ elderUid: e.detail.value.trim() })
   },
 
+  onBloodTypeChange(e) {
+    const index = e.detail.value
+    this.setData({
+      bloodTypeIndex: index,
+      bloodType: this.data.bloodTypes[index]
+    })
+  },
+
+  onEmergencyContactInput(e) {
+    this.setData({ emergencyContact: e.detail.value })
+  },
+
+  onAddressInput(e) {
+    this.setData({ address: e.detail.value })
+  },
+
   handleRegister() {
     const that = this
     const { name, phone, password, confirmPassword, userType, elderUid, verifyCode } = this.data
@@ -127,6 +148,13 @@ Page({
     // 如果是子女注册，添加老人 UID
     if (userType === 'family' && elderUid) {
       registerData.elder_uid = elderUid
+    }
+    
+    // 如果是老人注册，添加基本信息
+    if (userType === 'elder') {
+      registerData.blood_type = this.data.bloodType
+      registerData.emergency_contact = this.data.emergencyContact
+      registerData.address = this.data.address
     }
 
     wx.request({

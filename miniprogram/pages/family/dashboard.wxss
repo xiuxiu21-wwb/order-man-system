@@ -181,6 +181,147 @@
   margin-bottom: 25rpx;
 }
 
+.card-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.card-head-row .card-title {
+  margin-bottom: 0;
+}
+
+.dose-badge {
+  font-size: 20rpx;
+  color: #ea580c;
+  background: #fff7ed;
+  border: 1rpx solid #fed7aa;
+  border-radius: 20rpx;
+  padding: 8rpx 14rpx;
+  font-weight: 700;
+}
+
+.med-item {
+  display: flex;
+  gap: 16rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid #ffedd5;
+  background: #fffaf5;
+  padding: 20rpx;
+  margin-bottom: 14rpx;
+}
+
+.med-item.completed {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.med-time {
+  min-width: 100rpx;
+  text-align: center;
+  border-radius: 14rpx;
+  border: 1rpx solid #fed7aa;
+  background: white;
+  color: #ea580c;
+  font-size: 24rpx;
+  font-weight: 700;
+  padding: 10rpx 8rpx;
+  height: fit-content;
+}
+
+.med-time.completed {
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.med-main {
+  flex: 1;
+}
+
+.med-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.med-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.med-name.completed {
+  color: #94a3b8;
+}
+
+.med-tag {
+  font-size: 20rpx;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 16rpx;
+  padding: 4rpx 12rpx;
+  font-weight: 700;
+}
+
+.med-tag.done {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.med-dosage {
+  font-size: 23rpx;
+  color: #6b7280;
+  margin-bottom: 4rpx;
+}
+
+.med-times {
+  font-size: 21rpx;
+  color: #9ca3af;
+}
+
+.completed-toggle {
+  margin-top: 8rpx;
+  margin-bottom: 12rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 18rpx;
+  background: #f8fafc;
+  border: 1rpx solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completed-toggle-text {
+  font-size: 23rpx;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.completed-toggle-arrow {
+  font-size: 21rpx;
+  color: #94a3b8;
+}
+
+.empty-reminder {
+  text-align: center;
+  padding: 28rpx 16rpx;
+}
+
+.empty-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.empty-hint {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9ca3af;
+}
+
 .timeline-item {
   display: flex;
   margin-bottom: 30rpx;

@@ -1,21 +1,29 @@
 <view class="container">
+  <view class="header-bg"></view>
+  
   <view class="header">
-    <view class="greeting">您好，大爷！👋</view>
-    <view class="date-row">
-      <view class="date">{{currentDate}}</view>
-      <view class="uid-display" wx:if="{{uid}}" bindtap="copyUid">
-        <text class="uid-text">UID: {{uid}}</text>
-        <text class="uid-copy-btn">📋 一键复制</text>
+    <view class="greeting-section">
+      <view class="greeting-text">
+        <view class="hello">{{greeting}}</view>
+        <view class="user-name">{{userName}} 👋</view>
+      </view>
+      <view class="date-badge" bindtap="goToCalendar">
+        <text>{{currentDate}}</text>
       </view>
     </view>
     
     <!-- 天气卡片 -->
     <view class="weather-card" wx:if="{{weather}}">
-      <view class="weather-main">
-        <view class="weather-icon">{{weather.weather_icon}}</view>
-        <view class="weather-info">
-          <view class="weather-temp">{{weather.temperature}}°C</view>
-          <view class="weather-text">{{weather.weather}}</view>
+      <view class="weather-header">
+        <view class="weather-main">
+          <view class="weather-icon">{{weather.weather_icon}}</view>
+          <view class="weather-info">
+            <view class="weather-temp">{{weather.temperature}}°C</view>
+            <view class="weather-text">{{weather.weather}}</view>
+          </view>
+        </view>
+        <view class="refresh-btn" bindtap="refreshWeather">
+          <text class="refresh-icon">🔄</text>
         </view>
       </view>
       <view class="weather-details">
@@ -79,6 +87,10 @@
       <view class="action-icon">📰</view>
       <view class="action-title">今日新闻</view>
     </view>
+    <view class="action-card" bindtap="goToProfile">
+      <view class="action-icon">👤</view>
+      <view class="action-title">个人信息</view>
+    </view>
   </view>
 
   <view class="emergency-section">
@@ -88,16 +100,45 @@
   </view>
 
   <view class="card">
-    <view class="card-title">今日提醒</view>
-    
-    <!-- 动态加载药品提醒 -->
-    <view class="reminder-item" wx:for="{{medications}}" wx:key="time">
-      <view class="reminder-time">{{item.time}}</view>
-      <view class="reminder-content">{{item.dosage}}</view>
+    <view class="card-header">
+      <view class="card-title">今日提醒</view>
+      <view class="dose-badge" wx:if="{{pendingMedications.length + completedMedications.length > 0}}">
+        已完成 {{reminderCompletedDose}} 次 · 剩余 {{reminderRemainingDose}} 次
+      </view>
     </view>
-    
-    <!-- 空状态 -->
-    <view class="empty-reminder" wx:if="{{medications.length === 0}}">
+
+    <view class="reminder-item" wx:for="{{pendingMedications}}" wx:key="id">
+      <view class="reminder-time-pill">{{item.nextTime}}</view>
+      <view class="reminder-content">
+        <view class="reminder-top">
+          <text class="reminder-name">{{item.name}}</text>
+          <text class="reminder-count {{item.remainingTimes === 0 ? 'done' : ''}}">
+            {{item.remainingTimes === 0 ? '今日完成' : '剩 ' + item.remainingTimes + ' 次'}}
+          </text>
+        </view>
+        <text class="reminder-dosage">{{item.dosage}}</text>
+        <text class="reminder-times">时间：{{item.timesText}}</text>
+      </view>
+    </view>
+
+    <view class="completed-toggle" wx:if="{{completedMedications.length > 0}}" bindtap="toggleCompletedReminders">
+      <text class="completed-toggle-text">已完成 {{completedMedications.length}} 项</text>
+      <text class="completed-toggle-arrow">{{showCompletedReminders ? '收起' : '展开'}}</text>
+    </view>
+
+    <view class="reminder-item completed" wx:if="{{showCompletedReminders}}" wx:for="{{completedMedications}}" wx:key="id">
+      <view class="reminder-time-pill completed">{{item.nextTime}}</view>
+      <view class="reminder-content">
+        <view class="reminder-top">
+          <text class="reminder-name completed">{{item.name}}</text>
+          <text class="reminder-count done">今日完成</text>
+        </view>
+        <text class="reminder-dosage">{{item.dosage}}</text>
+        <text class="reminder-times">时间：{{item.timesText}}</text>
+      </view>
+    </view>
+
+    <view class="empty-reminder" wx:if="{{pendingMedications.length + completedMedications.length === 0}}">
       <view class="empty-text">暂无服药提醒</view>
       <view class="empty-hint">请前往服药提醒页面添加药品</view>
     </view>

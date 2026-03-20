@@ -7,22 +7,7 @@ Page({
     homeLongitude: 116.397428,
     homeLatitude: 39.90923,
     homeAddress: '家（北京市天安门广场）',
-    familyMembers: [
-      {
-        id: 1,
-        name: '儿子',
-        avatar: '👨',
-        distance: '距离 2.5 公里',
-        online: true
-      },
-      {
-        id: 2,
-        name: '女儿',
-        avatar: '👩',
-        distance: '距离 5.2 公里',
-        online: true
-      }
-    ]
+    markers: []
   },
 
   onLoad() {
@@ -35,6 +20,8 @@ Page({
         homeLatitude: homeLocation.latitude,
         homeAddress: homeLocation.address || '家',
         homeDetailAddress: homeLocation.detail_address || ''
+      }, () => {
+        this.updateMarkers()
       })
     }
   },
@@ -46,6 +33,8 @@ Page({
         this.setData({
           longitude: res.longitude,
           latitude: res.latitude
+        }, () => {
+          this.updateMarkers()
         })
         // 获取地址
         this.getAddress(res.longitude, res.latitude, 'current')
@@ -60,23 +49,71 @@ Page({
     })
   },
 
+  updateMarkers() {
+    const markers = []
+    
+    // 当前位置标记
+    markers.push({
+      id: 1,
+      latitude: this.data.latitude,
+      longitude: this.data.longitude,
+      iconPath: '/images/location-current.png', // 需要确保这个图片存在，或者使用系统默认
+      width: 32,
+      height: 32,
+      label: {
+        content: '我的位置',
+        color: '#ff8c00',
+        fontSize: 12,
+        anchorX: -30,
+        anchorY: -60,
+        padding: 4,
+        borderRadius: 4,
+        bgColor: '#ffffff'
+      }
+    })
+
+    // 家的位置标记
+    if (this.data.homeLongitude && this.data.homeLatitude) {
+      markers.push({
+        id: 2,
+        latitude: this.data.homeLatitude,
+        longitude: this.data.homeLongitude,
+        iconPath: '/images/location-home.png', // 需要确保图片存在
+        width: 32,
+        height: 32,
+        label: {
+          content: '家',
+          color: '#ff8c00',
+          fontSize: 12,
+          anchorX: -10,
+          anchorY: -60,
+          padding: 4,
+          borderRadius: 4,
+          bgColor: '#ffffff'
+        }
+      })
+    }
+
+    this.setData({ markers })
+  },
+
   getAddress(longitude, latitude, type = 'current') {
-    // 使用腾讯地图逆地址解析（小程序内置）
+    // 使用高德地图逆地址解析
     wx.request({
-      url: 'https://apis.map.qq.com/ws/geocoder/v1/',
+      url: 'https://restapi.amap.com/v3/geocode/regeo',
       data: {
-        location: `${latitude},${longitude}`,
-        key: 'your-tencent-map-key',
-        get_poi: 1
+        location: `${longitude},${latitude}`,
+        key: '82dc66f3753fd5736fe625de1141dafd',
+        extensions: 'all'
       },
       success: (res) => {
-        if (res.data && res.data.result) {
-          const result = res.data.result
-          const fullAddress = result.address || '当前位置'
-          const detailAddress = result.formatted_addresses || {
-            street: result.address_component.street || '',
-            street_number: result.address_component.street_number || ''
-          }
+        if (res.data && res.data.status === '1' && res.data.regeocode) {
+          const regeocode = res.data.regeocode
+          const fullAddress = regeocode.formatted_address || '当前位置'
+          const addressComponent = regeocode.addressComponent
+          const detailAddress = (addressComponent.streetNumber && addressComponent.streetNumber.street) 
+            ? addressComponent.streetNumber.street + (addressComponent.streetNumber.number || '') 
+            : fullAddress
           
           if (type === 'current') {
             this.setData({
@@ -84,7 +121,7 @@ Page({
             })
           } else if (type === 'home') {
             this.setData({
-              homeAddress: detailAddress.street + (detailAddress.street_number || ''),
+              homeAddress: detailAddress,
               homeDetailAddress: fullAddress
             })
           }
@@ -152,33 +189,46 @@ Page({
   // 设置家的位置
   setHomeLocation() {
     const that = this
-    wx.showModal({
-      title: '设置家的位置',
-      content: '是否将当前位置设置为家？',
-      confirmText: '确定',
-      cancelText: '取消',
+    wx.chooseLocation({
       success: (res) => {
-        if (res.confirm) {
-          // 获取详细地址
-          that.getAddress(that.data.longitude, that.data.latitude, 'home')
-          
-          const homeLocation = {
-            longitude: that.data.longitude,
-            latitude: that.data.latitude,
-            address: that.data.address,
-            detail_address: that.data.address
-          }
-          wx.setStorageSync('homeLocation', homeLocation)
-          that.setData({
-            homeLongitude: homeLocation.longitude,
-            homeLatitude: homeLocation.latitude,
-            homeAddress: homeLocation.address || '家',
-            homeDetailAddress: homeLocation.detail_address || ''
-          })
-          wx.showToast({
-            title: '家的位置已设置',
-            icon: 'success',
-            duration: 2000
+        const homeLocation = {
+          longitude: res.longitude,
+          latitude: res.latitude,
+          address: res.name || '家',
+          detail_address: res.address || res.name
+        }
+        wx.setStorageSync('homeLocation', homeLocation)
+        
+        that.setData({
+          homeLongitude: homeLocation.longitude,
+          homeLatitude: homeLocation.latitude,
+          latitude: homeLocation.latitude, // 自动把视角切换到新设定的家
+          longitude: homeLocation.longitude,
+          homeAddress: homeLocation.address,
+          homeDetailAddress: homeLocation.detail_address
+        }, () => {
+          that.updateMarkers()
+        })
+        
+        that.syncHomeAddressToProfile(homeLocation.detail_address)
+        
+        wx.showToast({
+          title: '设置成功',
+          icon: 'success'
+        })
+      },
+      fail: (err) => {
+        console.error('选择位置失败:', err)
+        if (err.errMsg.indexOf('auth deny') >= 0 || err.errMsg.indexOf('auth denied') >= 0) {
+          wx.showModal({
+            title: '需要位置权限',
+            content: '请在设置中开启位置权限，才能设置家的位置',
+            confirmText: '去设置',
+            success: (modalRes) => {
+              if (modalRes.confirm) {
+                wx.openSetting()
+              }
+            }
           })
         }
       }
@@ -197,5 +247,17 @@ Page({
         icon: 'success'
       })
     }, 1000)
+  },
+
+  syncHomeAddressToProfile(address) {
+    const that = this
+    const userInfo = wx.getStorageSync('userInfo')
+    if (userInfo) {
+      const updatedUserInfo = {
+        ...userInfo,
+        address: address
+      }
+      wx.setStorageSync('userInfo', updatedUserInfo)
+    }
   }
 })

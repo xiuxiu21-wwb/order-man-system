@@ -43,7 +43,7 @@ function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">认知障碍老人陪伴与防走失系统</h1>
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">家护伴 - 注册</h1>
         <h2 className="text-xl font-semibold text-center text-gray-600 mb-6">注册</h2>
         
         {error && (

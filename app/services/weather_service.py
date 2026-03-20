@@ -1,12 +1,13 @@
 """
 天气服务模块
-使用高德地图天气 API
+使用高德地图天气 API（临时方案，墨迹天气API需要确认正确端点）
 """
 import httpx
+from datetime import datetime
 from app.core.config import settings
 
 
-async def get_weather(city: str = "北京") -> dict:
+async def get_weather(city: str = "张家界") -> dict:
     """
     获取天气信息
     
@@ -20,8 +21,12 @@ async def get_weather(city: str = "北京") -> dict:
         api_key = settings.AMAP_API_KEY
         base_url = "https://restapi.amap.com/v3/weather/weatherInfo"
         
+        search_city = city
+        if "张家界" in city:
+            search_city = "430800"
+            
         params = {
-            "city": city,
+            "city": search_city,
             "key": api_key,
             "extensions": "all"
         }
@@ -30,11 +35,14 @@ async def get_weather(city: str = "北京") -> dict:
             response = await client.get(base_url, params=params)
             result = response.json()
             
+            print(f"高德天气 API 响应：{result}")
+            
             if result.get('status') == '1' and result.get('lives'):
                 live = result['lives'][0]
                 forecasts = result.get('forecasts', [])
-                forecast = forecasts[0] if forecasts else None
-                casts = forecast.get('casts', []) if forecast else []
+                
+                forecast = forecasts[0] if forecasts else {}
+                casts = forecast.get('casts', []) if isinstance(forecast, dict) else []
                 
                 return {
                     "city": live.get('city', city),
@@ -48,11 +56,14 @@ async def get_weather(city: str = "北京") -> dict:
                     "forecasts": casts[:3] if casts else []
                 }
             else:
-                return get_default_weather()
+                print(f"高德天气 API 调用失败，返回默认天气")
+                return get_default_weather(city)
                 
     except Exception as e:
         print(f"获取天气失败：{e}")
-        return get_default_weather()
+        import traceback
+        print(traceback.format_exc())
+        return get_default_weather(city)
 
 
 def get_weather_icon(weather_text: str) -> str:
@@ -90,22 +101,22 @@ def get_weather_icon(weather_text: str) -> str:
     return "🌤️"
 
 
-def get_default_weather() -> dict:
+def get_default_weather(city: str = "张家界") -> dict:
     """返回默认天气信息（API 调用失败时使用）"""
     return {
-        "city": "北京",
-        "weather": "晴",
-        "temperature": "25",
-        "humidity": "50",
-        "winddirection": "南风",
-        "windpower": "2",
+        "city": city,
+        "weather": "多云",
+        "temperature": "22",
+        "humidity": "65",
+        "winddirection": "东南风",
+        "windpower": "1",
         "report_time": "",
-        "weather_icon": "☀️",
+        "weather_icon": "☁️",
         "forecasts": []
     }
 
 
-def get_weather_sync(city: str = "北京") -> dict:
+def get_weather_sync(city: str = "张家界") -> dict:
     """
     获取天气信息（同步版本）
     """
@@ -113,8 +124,14 @@ def get_weather_sync(city: str = "北京") -> dict:
         api_key = settings.AMAP_API_KEY
         base_url = "https://restapi.amap.com/v3/weather/weatherInfo"
         
+        search_city = city
+        if "张家界" in city:
+            search_city = "430800"
+            
+        print(f"查询天气，城市：{city} (编码: {search_city})，API Key：{api_key[:10]}...")
+        
         params = {
-            "city": city,
+            "city": search_city,
             "key": api_key,
             "extensions": "all"
         }
@@ -122,6 +139,8 @@ def get_weather_sync(city: str = "北京") -> dict:
         with httpx.Client() as client:
             response = client.get(base_url, params=params)
             result = response.json()
+            
+            print(f"高德天气 API 响应：{result}")
             
             if result.get('status') == '1' and result.get('lives'):
                 live = result['lives'][0]
@@ -141,8 +160,11 @@ def get_weather_sync(city: str = "北京") -> dict:
                     "forecasts": casts[:3] if casts else []
                 }
             else:
+                print(f"高德天气 API 调用失败，返回默认天气")
                 return get_default_weather()
                 
     except Exception as e:
         print(f"获取天气失败：{e}")
+        import traceback
+        print(traceback.format_exc())
         return get_default_weather()
