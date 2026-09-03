@@ -1,6 +1,6 @@
 <view class="container">
   <view class="header-bg"></view>
-  
+
   <view class="header">
     <view class="greeting-section">
       <view class="greeting-text">
@@ -11,8 +11,7 @@
         <text>{{currentDate}}</text>
       </view>
     </view>
-    
-    <!-- 天气卡片 -->
+
     <view class="weather-card" wx:if="{{weather}}">
       <view class="weather-header">
         <view class="weather-main">
@@ -23,7 +22,7 @@
           </view>
         </view>
         <view class="refresh-btn" bindtap="refreshWeather">
-          <text class="refresh-icon">🔄</text>
+          <image class="refresh-icon-image" src="/10be08b8db9b73892266d236c347ab34.png" mode="aspectFit"></image>
         </view>
       </view>
       <view class="weather-details">
@@ -37,12 +36,10 @@
         </view>
         <view class="detail-item">
           <text class="detail-label">💨 风力</text>
-          <text class="detail-value">{{weather.windpower}}级</text>
+          <text class="detail-value">{{weather.windpower}}</text>
         </view>
       </view>
       <view class="weather-location">📍 {{weather.city}}</view>
-      
-      <!-- 未来预报 -->
       <view class="weather-forecast" wx:if="{{weather.forecasts && weather.forecasts.length > 0}}">
         <view class="forecast-title">未来天气</view>
         <view class="forecast-list">
@@ -54,12 +51,11 @@
         </view>
       </view>
     </view>
-    
+
     <view class="weather-loading" wx:elif="{{loadingWeather}}">
       <view class="loading-spinner">🌤️</view>
       <view class="loading-text">正在获取天气...</view>
     </view>
-    
     <view class="weather-default" wx:else>
       <view class="weather-icon">🌤️</view>
       <view class="weather-text">天气数据加载中</view>
@@ -67,36 +63,42 @@
   </view>
 
   <view class="quick-actions">
-    <view class="action-card" bindtap="goToVoice">
-      <view class="action-icon">🎤</view>
-      <view class="action-title">AI 语音陪伴</view>
+    <view class="action-card action-card-voice" bindtap="goToVoice">
+      <image class="action-icon-image" src="/8c198ece265dd34e4c182b9f37adb177.png" mode="aspectFit"></image>
+      <view class="action-title">大模型陪伴</view>
     </view>
-    <view class="action-card" bindtap="goToMedication">
-      <view class="action-icon">💊</view>
+    <view class="action-card action-card-medication" bindtap="goToMedication">
+      <image class="action-icon-image" src="/61e3a3f613415b1bc1ad1e5d08bf2dd2.png" mode="aspectFit"></image>
       <view class="action-title">服药提醒</view>
     </view>
-    <view class="action-card" bindtap="goToImageRecognition">
-      <view class="action-icon">📷</view>
-      <view class="action-title">图片识别</view>
+    <view class="action-card action-card-image" bindtap="goToImageRecognition">
+      <image class="action-icon-image" src="/4622c0bd1e540a8098b16734b5d7a4d7.png" mode="aspectFit"></image>
+      <view class="action-title">居家安全识别</view>
     </view>
-    <view class="action-card" bindtap="goToMap">
-      <view class="action-icon">🗺️</view>
+    <view class="action-card action-card-map" bindtap="goToMap">
+      <image class="action-icon-image" src="/da6c9ef7091e320f61144419af147f89.png" mode="aspectFit"></image>
       <view class="action-title">家庭地图</view>
     </view>
-    <view class="action-card" bindtap="goToNews">
-      <view class="action-icon">📰</view>
+    <view class="action-card action-card-news" bindtap="goToNews">
+      <image class="action-icon-image" src="/bde540e5af9b5a147cf31bb84caac328.png" mode="aspectFit"></image>
       <view class="action-title">今日新闻</view>
     </view>
-    <view class="action-card" bindtap="goToProfile">
-      <view class="action-icon">👤</view>
+    <view class="action-card action-card-videos" bindtap="goToVideos">
+      <view class="video-action-icon">▶</view>
+      <view class="action-title">刷视频</view>
+    </view>
+    <view class="action-card action-card-camera" bindtap="goToCamera">
+      <view class="video-action-icon camera-icon">看</view>
+      <view class="action-title">家庭双摄</view>
+    </view>
+    <view class="action-card action-card-profile" bindtap="goToProfile">
+      <image class="action-icon-image" src="/2f70d6f6f75c6e9202ca79dd7de2373b.png" mode="aspectFit"></image>
       <view class="action-title">个人信息</view>
     </view>
   </view>
 
   <view class="emergency-section">
-    <button class="emergency-btn" bindtap="triggerEmergency">
-      🚨 一键求助
-    </button>
+    <button class="emergency-btn" bindtap="triggerEmergency">🚨 一键求助</button>
   </view>
 
   <view class="card">
@@ -108,7 +110,12 @@
     </view>
 
     <view class="reminder-item" wx:for="{{pendingMedications}}" wx:key="id">
-      <view class="reminder-time-pill">{{item.nextTime}}</view>
+      <view class="reminder-times-wrapper" wx:if="{{item.timePills && item.timePills.length > 0}}">
+        <view class="reminder-time-pill {{pill.taken ? 'taken' : ''}}" wx:for="{{item.timePills}}" wx:for-item="pill" wx:for-index="pillIndex" wx:key="pillIndex" bindtap="toggleMedicationTaken" data-med-index="{{index}}" data-pill-index="{{pillIndex}}">
+          <text>{{pill.time}}</text>
+          <text wx:if="{{pill.taken}}">✓</text>
+        </view>
+      </view>
       <view class="reminder-content">
         <view class="reminder-top">
           <text class="reminder-name">{{item.name}}</text>
@@ -117,7 +124,6 @@
           </text>
         </view>
         <text class="reminder-dosage">{{item.dosage}}</text>
-        <text class="reminder-times">时间：{{item.timesText}}</text>
       </view>
     </view>
 
@@ -127,14 +133,18 @@
     </view>
 
     <view class="reminder-item completed" wx:if="{{showCompletedReminders}}" wx:for="{{completedMedications}}" wx:key="id">
-      <view class="reminder-time-pill completed">{{item.nextTime}}</view>
+      <view class="reminder-times-wrapper" wx:if="{{item.timePills && item.timePills.length > 0}}">
+        <view class="reminder-time-pill completed {{pill.taken ? 'taken' : ''}}" wx:for="{{item.timePills}}" wx:for-item="pill" wx:for-index="pillIndex" wx:key="pillIndex">
+          <text>{{pill.time}}</text>
+          <text wx:if="{{pill.taken}}">✓</text>
+        </view>
+      </view>
       <view class="reminder-content">
         <view class="reminder-top">
           <text class="reminder-name completed">{{item.name}}</text>
           <text class="reminder-count done">今日完成</text>
         </view>
         <text class="reminder-dosage">{{item.dosage}}</text>
-        <text class="reminder-times">时间：{{item.timesText}}</text>
       </view>
     </view>
 
@@ -146,5 +156,99 @@
 
   <view class="logout-section">
     <button class="logout-btn" bindtap="logout">返回首页</button>
+  </view>
+
+  <!-- 唤起奶龙时覆盖首页，保留首页作为背景，不发生页面跳转。 -->
+  <view class="pet-chat-overlay" wx:if="{{petChatOpen}}" catchtap="closePetChat"></view>
+
+  <!-- 对话框作为首页独立浮层，保证输入框可点击、可聚焦。 -->
+  <view class="pet-chat-panel" wx:if="{{petChatOpen}}" catchtap="preventPetChatTap">
+    <view class="pet-chat-header">
+      <view class="pet-chat-title">和奶龙聊聊</view>
+      <view class="pet-chat-close" bindtap="closePetChat" aria-label="关闭对话">×</view>
+    </view>
+    <scroll-view class="pet-chat-messages" scroll-y="true" scroll-into-view="{{petChatScrollTarget}}">
+      <view
+        class="pet-chat-message {{item.isUser ? 'user' : 'pet'}}"
+        wx:for="{{petChatMessages}}"
+        wx:key="id"
+      >
+        <text>{{item.text}}</text>
+        <view class="pet-navigation-card" wx:if="{{item.navigation}}">
+          <view class="pet-navigation-name">{{item.navigation.name}}</view>
+          <view class="pet-navigation-address">{{item.navigation.address}}</view>
+          <view class="pet-navigation-distance">当前位置距此约 {{item.navigation.distance_text}}</view>
+          <view
+            class="pet-navigation-button"
+            bindtap="openPetNavigation"
+            data-latitude="{{item.navigation.latitude}}"
+            data-longitude="{{item.navigation.longitude}}"
+            data-name="{{item.navigation.name}}"
+            data-address="{{item.navigation.address}}"
+          >导航去这里</view>
+        </view>
+      </view>
+      <view class="pet-chat-typing" wx:if="{{petChatSending}}">
+        <view></view><view></view><view></view>
+      </view>
+      <view id="{{petChatScrollTarget}}"></view>
+    </scroll-view>
+    <view class="pet-chat-input-row">
+      <input
+        class="pet-chat-input"
+        value="{{petChatInput}}"
+        placeholder="想和奶龙说什么？"
+        placeholder-class="pet-chat-placeholder"
+        bindinput="onPetChatInput"
+        bindconfirm="sendPetChat"
+        confirm-type="send"
+      />
+      <view class="pet-chat-send {{petChatInput ? 'ready' : ''}}" bindtap="sendPetChat">发送</view>
+    </view>
+  </view>
+
+  <!-- 悬浮桌宠：点击后在首页展开对话面板，拖动奶龙可调整位置。 -->
+  <view
+    class="floating-pet {{petIsDragging ? 'is-dragging' : ''}} {{petChatOpen ? 'chat-open' : ''}}"
+    style="{{petStyle}}"
+    aria-label="拖动奶龙，或点击与奶龙对话"
+  >
+    <view class="floating-pet-bubble" wx:if="{{!petChatOpen}}" bindtap="onPetTap">
+      <view class="floating-pet-plan-title">
+        <text>今日计划</text>
+        <text class="floating-pet-plan-status {{carePlan && carePlan.risks.length > 0 ? 'attention' : ''}}">
+          {{carePlan && carePlan.risks.length > 0 ? '需关注' : '状态平稳'}}
+        </text>
+      </view>
+      <view class="floating-pet-plan-loading" wx:if="{{carePlanLoading && !carePlan}}">正在整理今日计划...</view>
+      <block wx:elif="{{carePlan}}">
+        <view class="floating-pet-plan-summary">{{carePlan.summary}}</view>
+        <view class="floating-pet-plan-task" wx:for="{{petCareTasks}}" wx:key="id">
+          <view class="floating-pet-plan-dot"></view>
+          <text class="floating-pet-plan-task-text">{{item.title}}</text>
+        </view>
+      </block>
+      <view class="floating-pet-plan-loading" wx:else>今日计划加载后显示</view>
+      <view class="floating-pet-medication">
+        <view class="floating-pet-medication-title">服药计划</view>
+        <block wx:if="{{petMedicationPlans.length > 0}}">
+          <view class="floating-pet-medication-row" wx:for="{{petMedicationPlans}}" wx:key="id">
+            <text class="floating-pet-medication-time">{{item.time}}</text>
+            <text class="floating-pet-medication-name">{{item.name}}</text>
+          </view>
+        </block>
+        <view class="floating-pet-medication-empty" wx:else>暂无服药提醒</view>
+      </view>
+    </view>
+    <image
+      class="floating-pet-image"
+      src="/images/desk-pet.png"
+      mode="aspectFit"
+      bindtap="onPetTap"
+      bindtouchstart="startPetDrag"
+      catchtouchmove="movePet"
+      catchtouchend="endPetDrag"
+      catchtouchcancel="endPetDrag"
+    />
   </view>
 </view>
