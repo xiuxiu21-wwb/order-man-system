@@ -1,5 +1,6 @@
 const app = getApp()
 const { fetchOpenMeteoWeather, getDistanceKm } = require('../../utils/open-meteo')
+const petRecorderManager = wx.getRecorderManager()
 
 const getLocalDateKey = () => {
   const now = new Date()
@@ -41,6 +42,8 @@ Page({
     petChatInput: '',
     petChatMessages: [],
     petChatSending: false,
+    petIsRecording: false,
+    petVoiceRecognizing: false,
     petChatScrollTarget: '',
     petSpeaking: false,
     quickQuestions: [
@@ -53,7 +56,9 @@ Page({
   onLoad() {
     this.audioContext = wx.createInnerAudioContext()
     this.lastPetTtsRequestId = 0
+    this.lastPetChatRequestId = 0
     this.petPlanAnnounced = false
+    this.initPetRecorder()
     this.initPetPosition()
     this.updateDate()
     this.updateGreeting()
@@ -940,6 +945,78 @@ Page({
 
   preventPetChatTap() {},
 
+  initPetRecorder() {
+    if (this.petRecorderInitialized) return
+    this.petRecorderInitialized = true
+    petRecorderManager.onStop((res) => {
+      if (!this.data.petIsRecording) return
+      this.setData({ petIsRecording: false })
+      wx.hideToast()
+      if (res.tempFilePath) {
+        this.uploadPetVoice(res.tempFilePath)
+      } else {
+        wx.showToast({ title: '没有录到声音，请重试', icon: 'none' })
+      }
+    })
+    petRecorderManager.onError((err) => {
+      console.error('[pet] 录音失败:', err)
+      this.setData({ petIsRecording: false, petVoiceRecognizing: false })
+      wx.hideToast()
+      wx.showToast({ title: '录音失败，请重试', icon: 'none' })
+    })
+  },
+
+  togglePetVoice() {
+    if (this.data.petIsRecording) {
+      petRecorderManager.stop()
+      return
+    }
+    if (this.data.petVoiceRecognizing) return
+    this.stopPetSpeaking()
+    // 新一轮语音代表用户开始新的对话，令尚未返回的旧聊天结果失效。
+    this.lastPetChatRequestId = (this.lastPetChatRequestId || 0) + 1
+    if (this.data.petChatSending) this.setData({ petChatSending: false })
+    petRecorderManager.start({
+      duration: 60000,
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      encodeBitRate: 48000,
+      format: 'wav'
+    })
+    this.setData({ petIsRecording: true })
+    wx.showToast({ title: '正在听，请再次点击结束', icon: 'none', duration: 60000 })
+  },
+
+  uploadPetVoice(tempFilePath) {
+    this.setData({ petVoiceRecognizing: true })
+    wx.showLoading({ title: '识别中...' })
+    wx.uploadFile({
+      url: app.globalData.apiBaseUrl + '/voice',
+      filePath: tempFilePath,
+      name: 'file',
+      success: (res) => {
+        wx.hideLoading()
+        let result = null
+        try { result = JSON.parse(res.data) } catch (e) { result = null }
+        const text = result && result.success && typeof result.text === 'string' ? result.text.trim() : ''
+        if (!text) {
+          wx.showToast({ title: (result && result.message) || '识别失败，请重试', icon: 'none' })
+          return
+        }
+        this.appendPetChatMessage(text, true)
+        this.setData({ petVoiceRecognizing: false, petChatSending: true })
+        if (this.handlePetChatCommand(text)) return
+        this.requestPetChatReply(text)
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('[pet] 上传录音失败:', err)
+        wx.showToast({ title: '语音上传失败，请重试', icon: 'none' })
+      },
+      complete: () => this.setData({ petVoiceRecognizing: false })
+    })
+  },
+
   onPetChatInput(e) {
     this.setData({ petChatInput: e.detail.value })
   },
@@ -963,13 +1040,19 @@ Page({
 
   sendPetChat() {
     const message = this.data.petChatInput.trim()
-    if (!message || this.data.petChatSending) return
+    if (!message) return
 
     this.stopPetSpeaking()
+    this.lastPetChatRequestId = (this.lastPetChatRequestId || 0) + 1
     this.appendPetChatMessage(message, true)
     this.setData({ petChatInput: '', petChatSending: true })
     if (this.handlePetChatCommand(message)) return
 
+    this.requestPetChatReply(message)
+  },
+
+  requestPetChatReply(message) {
+    const requestId = ++this.lastPetChatRequestId
     const userInfo = wx.getStorageSync('userInfo') || {}
     const elderInfo = wx.getStorageSync('elderInfo') || {}
     const messages = this.data.petChatMessages
@@ -996,6 +1079,7 @@ Page({
         header: { 'Content-Type': 'application/json' },
         data,
         success: (res) => {
+          if (requestId !== this.lastPetChatRequestId) return
           const reply = res.data && (res.data.response || res.data.text || res.data.message)
           this.appendPetChatMessage(
             typeof reply === 'string' && reply.trim()
@@ -1007,10 +1091,13 @@ Page({
           if (typeof reply === 'string' && reply.trim()) this.speakPetText(reply.trim())
         },
         fail: () => {
+          if (requestId !== this.lastPetChatRequestId) return
           this.appendPetChatMessage('现在网络有点忙，您稍等一下再试。', false)
           this.speakPetText('现在网络有点忙，您稍等一下再试。')
         },
-        complete: () => this.setData({ petChatSending: false })
+        complete: () => {
+          if (requestId === this.lastPetChatRequestId) this.setData({ petChatSending: false })
+        }
       })
     }
 
@@ -1024,6 +1111,7 @@ Page({
       isHighAccuracy: true,
       success: (res) => requestChat({ latitude: res.latitude, longitude: res.longitude }),
       fail: () => {
+        if (requestId !== this.lastPetChatRequestId) return
         this.appendPetChatMessage('请先开启位置权限，我才能通过高德地图查询目的地距离并为您导航。', false)
         this.setData({ petChatSending: false })
       }

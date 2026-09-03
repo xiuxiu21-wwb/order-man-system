@@ -194,6 +194,13 @@
       <view id="{{petChatScrollTarget}}"></view>
     </scroll-view>
     <view class="pet-chat-input-row">
+      <view
+        class="pet-chat-voice {{petIsRecording ? 'recording' : ''}}"
+        bindtap="togglePetVoice"
+        aria-label="{{petIsRecording ? '结束语音输入' : '开始语音输入'}}"
+      >
+        <text>{{petIsRecording ? '■' : '🎤'}}</text>
+      </view>
       <input
         class="pet-chat-input"
         value="{{petChatInput}}"
@@ -205,6 +212,7 @@
       />
       <view class="pet-chat-send {{petChatInput ? 'ready' : ''}}" bindtap="sendPetChat">发送</view>
     </view>
+    <view class="pet-chat-voice-hint" wx:if="{{petVoiceRecognizing}}">正在识别语音...</view>
   </view>
 
   <!-- 悬浮桌宠：点击后在首页展开对话面板，拖动奶龙可调整位置。 -->
