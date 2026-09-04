@@ -18,17 +18,9 @@ VIDEO_DIR = PROJECT_DIR / "media" / "videos"
 # screen responsive and keep the mini-program's offline cache practical.
 LOCAL_VIDEO_FEED = [
     {"id": "care-clip-01", "file": "clip-01", "title": "湖边慢步", "description": "放慢脚步，享受片刻宁静。", "source": "家护伴短片"},
-    {"id": "care-clip-02", "file": "clip-02", "title": "湖光与树影", "description": "看看自然风景，放松一下眼睛。", "source": "家护伴短片"},
-    {"id": "care-clip-03", "file": "clip-03", "title": "午后公园", "description": "天气合适时，出门走走也很好。", "source": "家护伴短片"},
-    {"id": "care-clip-04", "file": "clip-04", "title": "绿意时光", "description": "轻松观看，记得调整舒适坐姿。", "source": "家护伴短片"},
     {"id": "care-clip-05", "file": "clip-05", "title": "城市散步", "description": "出门前带好水和常用药品。", "source": "家护伴短片"},
-    {"id": "care-clip-06", "file": "clip-06", "title": "慢行一刻", "description": "步子不用快，安全最重要。", "source": "家护伴短片"},
-    {"id": "care-clip-07", "file": "clip-07", "title": "沿途风景", "description": "看看身边的小美好。", "source": "家护伴短片"},
-    {"id": "care-clip-08", "file": "clip-08", "title": "自在走走", "description": "活动后可以做几次舒缓呼吸。", "source": "家护伴短片"},
     {"id": "care-clip-09", "file": "clip-09", "title": "街景片刻", "description": "在家也能看看外面的生活。", "source": "家护伴短片"},
-    {"id": "care-clip-10", "file": "clip-10", "title": "城市午后", "description": "看累了就暂停，休息一会儿。", "source": "家护伴短片"},
     {"id": "care-clip-11", "file": "clip-11", "title": "花开时节", "description": "颜色和花香总能带来好心情。", "source": "家护伴短片"},
-    {"id": "care-clip-12", "file": "clip-12", "title": "静看花影", "description": "舒展肩颈，慢慢享受这一刻。", "source": "家护伴短片"},
 ]
 
 
@@ -102,8 +94,10 @@ async def get_video_asset(filename: str):
 
 @router.get("/feed")
 async def get_video_feed():
-    # Restore the original remote feed first. Local clips are only a fallback,
-    # otherwise every phone has to stream the same files from our small server.
+    local_videos = get_local_video_feed()
+    if local_videos:
+        return {"success": True, "data": local_videos, "source": "jiahuban_cached_clips"}
+
     configured = await fetch_authorized_feed()
     if configured:
         return {"success": True, "data": configured, "source": "authorized_feed"}

@@ -154,12 +154,14 @@ Page({
       url: app.globalData.apiBaseUrl + '/videos/feed',
       method: 'GET',
       success: (res) => {
-        // 旧服务器可能还会返回 12 个同源 clip，这些条目只是换了标题并没有新画面。
+        // 旧服务器返回的 clip 按源视频分组，交错排序后避免连续看到同一场景。
         const serverData = res.data && Array.isArray(res.data.data) ? res.data.data : []
         const isOldDuplicateFeed = res.data && res.data.source === 'jiahuban_cached_clips'
-        const videos = isOldDuplicateFeed
-          ? []
-          : serverData.filter(item => item && item.video_url)
+        const videos = serverData.filter(item => item && item.video_url)
+        if (isOldDuplicateFeed) {
+          const order = ['care-clip-01', 'care-clip-05', 'care-clip-09', 'care-clip-11', 'care-clip-02', 'care-clip-06', 'care-clip-10', 'care-clip-12', 'care-clip-03', 'care-clip-07', 'care-clip-04', 'care-clip-08']
+          videos.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+        }
         if (videos.length) this.setVideos(videos, false)
       },
       fail: () => {
