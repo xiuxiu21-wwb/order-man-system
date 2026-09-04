@@ -154,9 +154,12 @@ Page({
       url: app.globalData.apiBaseUrl + '/videos/feed',
       method: 'GET',
       success: (res) => {
-        const videos = res.data && Array.isArray(res.data.data)
-          ? res.data.data.filter(item => item && item.video_url)
-          : []
+        // 旧服务器可能还会返回 12 个同源 clip，这些条目只是换了标题并没有新画面。
+        const serverData = res.data && Array.isArray(res.data.data) ? res.data.data : []
+        const isOldDuplicateFeed = res.data && res.data.source === 'jiahuban_cached_clips'
+        const videos = isOldDuplicateFeed
+          ? []
+          : serverData.filter(item => item && item.video_url)
         if (videos.length) this.setVideos(videos, false)
       },
       fail: () => {
