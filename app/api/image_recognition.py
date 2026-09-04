@@ -4,6 +4,7 @@ import httpx
 import base64
 import random
 import io
+import os
 from PIL import Image
 from app.core.config import settings
 
@@ -12,6 +13,9 @@ router = APIRouter()
 class ImageRecognitionResponse(BaseModel):
     description: str
     confidence: float
+    category: str = "居家物品"
+    safety_level: str = "unknown"
+    disclaimer: str = "识别结果仅供辅助确认，涉及药品、食品和安全风险时请再次人工核对。"
 
 def analyze_image(image_bytes):
     """智能分析图片特征"""
@@ -114,19 +118,26 @@ def get_smart_description(features):
     
     return random.choice(descriptions)
 
-async def recognize_with_minimax(image_bytes):
-    """使用 MiniMax 多模态 API 识别图片"""
+async def recognize_with_vision_model(image_bytes):
+    """使用 OpenAI 兼容多模态 API 识别图片。
+
+    API 地址、模型和密钥均从服务器环境变量读取，避免把密钥放进小程序或代码仓库。
+    """
     try:
-        print("开始调用 MiniMax 多模态 API...")
-        
+        # 直接读取环境变量，兼容服务器上被 .gitignore 忽略的 config.py。
+        api_key = (os.getenv("VISION_API_KEY") or getattr(settings, "VISION_API_KEY", "") or "").strip()
+        base_url = (os.getenv("VISION_API_URL") or getattr(settings, "VISION_API_URL", "https://api.qlhazycoder.top/v1") or "").strip().rstrip('/')
+        model = (os.getenv("VISION_MODEL") or getattr(settings, "VISION_MODEL", "gpt-5.6-sol") or "").strip()
+        if not api_key:
+            print("未配置 VISION_API_KEY，跳过远程图片识别")
+            return None, 0.3
+        if not base_url or not model:
+            print("VISION_API_URL 或 VISION_MODEL 未配置，跳过远程图片识别")
+            return None, 0.3
+
+        print(f"开始调用视觉模型：base_url={base_url}, model={model}")
+
         image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-        
-        api_key = settings.MINIMAX_API_KEY
-        base_url = settings.MINIMAX_API_URL
-        # 使用支持视觉的模型
-        model = "abab6.5s-chat"
-        
-        print(f"API 配置：base_url={base_url}, model={model}")
         
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -140,38 +151,36 @@ async def recognize_with_minimax(image_bytes):
                     "role": "user",
                     "content": [
                         {
-                            "type": "text",
-                            "text": """你是一款专为老年人设计的图片识别助手。请识别这张图片，并按以下要求输出：
-
-【核心要求】
-1. **第一句话必须直接说明这是什么**：开头就用"这是..."的句式，直接说出图片中的内容（如：这是一部电影/电视剧/人物/物品）
-2. **第二句补充作品名称**：如果是影视作品，明确说出完整名称
-3. **语言通俗**：用短句、口语化表达，避免专业术语
-4. **突出关键信息**：说明角色身份、场景或剧情背景
-5. **忽略干扰**：自动过滤屏幕边框、品牌标识、时间戳等无关信息
-6. **温暖结尾**：最后加一句温暖的引导语
-
-【输出格式示例】
-这是一部经典历史题材电视剧。
-作品名称：《汉武大帝》
-画面中的主角是汉武帝，他正在思考如何治理国家。这句"为黎民百姓还一方安宁"体现了他心系百姓的情怀。
-这样的场景让人感受到古代帝王的责任担当，您觉得呢？
-
-请识别这张图片，150 字以内，让老人一眼就能看明白！"""
-                        },
-                        {
                             "type": "image_url",
                             "image_url": {
                                 "url": f"data:image/jpeg;base64,{image_base64}"
                             }
+                        },
+                        {
+                            "type": "text",
+                            "text": """你是家护伴的多模态居家安全助手，服务居家老人。请观察图片中的主体和环境风险。
+
+重点检查：
+1. 药品名称、包装和有效期是否能看清，但绝不猜测剂量或给出用药方案；
+2. 食品名称、可见生产日期或保质期，以及明显腐败迹象；
+3. 地面积水、杂物绊倒、通道堵塞、裸露电线、未关闭燃气灶或明火等风险；
+4. 图片模糊或证据不足时明确说“无法确认”，不要编造。
+
+请使用老人容易理解的短句，严格按以下格式输出：
+看到的内容：
+需要留意：
+建议怎么做：
+
+最后一行固定写：识别结果仅供辅助确认。"""
                         }
                     ]
                 }
             ],
-            "max_tokens": 400
+            "temperature": 0.7,
+            "max_tokens": 200
         }
         
-        print("发送 API 请求...")
+        print("发送图片识别请求...")
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(
                 f"{base_url}/chat/completions",
@@ -180,39 +189,44 @@ async def recognize_with_minimax(image_bytes):
             )
             
             print(f"API 响应状态码：{response.status_code}")
-            print(f"API 响应内容：{response.text[:500]}")
             
             if response.status_code == 200:
                 result = response.json()
-                print(f"API 响应：{result}")
+                print(f"完整响应内容：{result}")
                 
                 if result.get('choices') and len(result['choices']) > 0:
-                    message = result['choices'][0].get('message', {})
+                    choice = result['choices'][0]
+                    print(f"Choice 内容：{choice}")
+                    message = choice.get('message', {}) or {}
                     description = message.get('content', '')
+                    if isinstance(description, list):
+                        description = ''.join(
+                            part.get('text', '') if isinstance(part, dict) else str(part)
+                            for part in description
+                        )
                     
                     if description:
                         print(f"识别结果：{description}")
                         return description, 0.95
             
-            print("API 调用未返回有效结果，使用本地分析")
+            print("视觉模型未返回有效结果，使用安全兜底提示")
             return None, 0.8
             
     except Exception as e:
-        print(f"MiniMax 多模态 API 调用失败：{e}")
+        print(f"视觉模型 API 调用失败：{e}")
         import traceback
         print(traceback.format_exc())
         return None, 0.8
 
 @router.post("/recognize", response_model=ImageRecognitionResponse)
 async def recognize_image(file: UploadFile = File(...)):
-    """识别图片内容 - 使用 MiniMax 多模态 API，失败时回退到本地分析"""
+    """识别图片内容 - 使用配置的视觉模型，失败时返回保守提示。"""
     try:
         contents = await file.read()
         
         print(f"收到图片，大小：{len(contents)} 字节")
         
-        # 使用 MiniMax 多模态 API
-        api_description, api_confidence = await recognize_with_minimax(contents)
+        api_description, api_confidence = await recognize_with_vision_model(contents)
         
         if api_description:
             return ImageRecognitionResponse(
@@ -228,8 +242,10 @@ async def recognize_image(file: UploadFile = File(...)):
         print(f"生成的描述：{description}")
         
         return ImageRecognitionResponse(
-            description=description,
-            confidence=0.85
+            description="图片信息不足，暂时无法可靠判断物品或居家风险，请在光线充足时重新拍摄。",
+            confidence=0.3,
+            category="无法确认",
+            safety_level="unknown"
         )
                 
     except Exception as e:
@@ -237,6 +253,8 @@ async def recognize_image(file: UploadFile = File(...)):
         import traceback
         print(traceback.format_exc())
         return ImageRecognitionResponse(
-            description="这是一张很有趣的图片！",
-            confidence=0.8
+            description="图片识别暂时不可用，请稍后重试；不要仅凭本次结果处理药品或安全风险。",
+            confidence=0.0,
+            category="识别失败",
+            safety_level="unknown"
         )
