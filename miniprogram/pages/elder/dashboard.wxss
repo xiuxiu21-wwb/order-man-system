@@ -289,20 +289,20 @@
   border-right: 2rpx solid #fed7aa;
   transform: rotate(45deg);
 }
-.floating-pet-plan-title { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; color: #9a3412; font-size: 24rpx; font-weight: 800; }
-.floating-pet-plan-status { flex-shrink: 0; padding: 3rpx 8rpx; color: #047857; background: #ecfdf5; border-radius: 8rpx; font-size: 17rpx; font-weight: 700; }
+.floating-pet-plan-title { display: flex; align-items: center; justify-content: space-between; gap: 8rpx; color: #9a3412; font-size: 30rpx; font-weight: 800; }
+.floating-pet-plan-status { flex-shrink: 0; padding: 4rpx 9rpx; color: #047857; background: #ecfdf5; border-radius: 8rpx; font-size: 20rpx; font-weight: 700; }
 .floating-pet-plan-status.attention { color: #b91c1c; background: #fff1f2; }
-.floating-pet-plan-summary { display: -webkit-box; margin-top: 7rpx; overflow: hidden; color: #765849; font-size: 19rpx; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.floating-pet-plan-task { display: flex; align-items: center; gap: 7rpx; margin-top: 7rpx; overflow: hidden; }
+.floating-pet-plan-summary { display: -webkit-box; margin-top: 9rpx; overflow: hidden; color: #765849; font-size: 24rpx; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.floating-pet-plan-task { display: flex; align-items: center; gap: 7rpx; margin-top: 9rpx; overflow: hidden; }
 .floating-pet-plan-dot { width: 8rpx; height: 8rpx; flex-shrink: 0; background: #f59e0b; border-radius: 50%; }
-.floating-pet-plan-task-text { overflow: hidden; color: #8d5845; font-size: 18rpx; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.floating-pet-plan-loading { padding: 12rpx 0 4rpx; color: #9a7467; font-size: 19rpx; }
+.floating-pet-plan-task-text { overflow: hidden; color: #8d5845; font-size: 24rpx; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.floating-pet-plan-loading { padding: 12rpx 0 4rpx; color: #9a7467; font-size: 24rpx; }
 .floating-pet-medication { padding-top: 10rpx; margin-top: 10rpx; border-top: 1rpx solid #fde7d8; }
-.floating-pet-medication-title { color: #9a3412; font-size: 20rpx; font-weight: 800; }
+.floating-pet-medication-title { color: #9a3412; font-size: 24rpx; font-weight: 800; }
 .floating-pet-medication-row { display: flex; align-items: center; gap: 9rpx; margin-top: 6rpx; overflow: hidden; }
-.floating-pet-medication-time { flex-shrink: 0; color: #c2410c; font-size: 18rpx; font-weight: 800; }
-.floating-pet-medication-name { overflow: hidden; color: #8d5845; font-size: 18rpx; text-overflow: ellipsis; white-space: nowrap; }
-.floating-pet-medication-empty { margin-top: 6rpx; color: #9a7467; font-size: 18rpx; }
+.floating-pet-medication-time { flex-shrink: 0; color: #c2410c; font-size: 22rpx; font-weight: 800; }
+.floating-pet-medication-name { overflow: hidden; color: #8d5845; font-size: 22rpx; text-overflow: ellipsis; white-space: nowrap; }
+.floating-pet-medication-empty { margin-top: 6rpx; color: #9a7467; font-size: 22rpx; }
 .floating-pet-image {
   position: absolute;
   right: 0;
