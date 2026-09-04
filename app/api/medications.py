@@ -52,7 +52,7 @@ def _build_daily_items(medications: List[Medication], target_date: date, db: Ses
         today_status = [{"time": t, "taken": t in taken_set} for t in times]
         taken_count = len([s for s in today_status if s["taken"]])
         remaining_count = max(len(times) - taken_count, 0)
-        remaining_days = None
+        remaining_days = 1
         if med.end_date:
             remaining_days = (med.end_date.date() - target_date).days + 1
             if remaining_days < 0:

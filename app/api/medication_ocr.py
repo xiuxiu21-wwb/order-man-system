@@ -15,7 +15,7 @@ class MedicationOCRResponse(BaseModel):
     frequency: Optional[str] = None
     dosage: Optional[str] = None
     times: List[str] = []
-    duration_days: Optional[int] = None
+    duration_days: Optional[int] = 1
     raw_text: Optional[str] = None
 
 @router.post("/medication-ocr", response_model=MedicationOCRResponse)
@@ -164,8 +164,14 @@ async def recognize_medication_label(file: UploadFile = File(...)):
                                 duration_keys = ['服用天数', 'duration_days', '天数']
                                 for key in duration_keys:
                                     if ai_result.get(key):
-                                        result_obj.duration_days = ai_result[key]
+                                        try:
+                                            result_obj.duration_days = max(1, int(ai_result[key]))
+                                        except (TypeError, ValueError):
+                                            result_obj.duration_days = 1
                                         break
+
+                                if not result_obj.duration_days:
+                                    result_obj.duration_days = 1
                                 
                                 result_obj.raw_text = content
                                 

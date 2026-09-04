@@ -97,7 +97,7 @@ Page({
             dosage: item.dosage || '',
             todayStatus: item.todayStatus || [],
             todayRemainingCount: item.todayRemainingCount || 0,
-            remainingDays: item.remainingDays,
+            remainingDays: item.remainingDays == null ? 1 : item.remainingDays,
             isBackend: true
           }))
           that.setData({ medications })
