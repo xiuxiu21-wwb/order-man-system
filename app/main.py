@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import users, conversations, medications, locations, alerts, image_recognition, weather, verify_code, bindings, news, admin, voice_recognition, medication_ocr
+from app.api import users, conversations, medications, locations, alerts, image_recognition, weather, verify_code, bindings, news, admin, voice_recognition, medication_ocr, videos
 
 app = FastAPI(
     title="家护伴",
@@ -32,6 +32,7 @@ app.include_router(news.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
 app.include_router(voice_recognition.router, prefix="/api")
 app.include_router(medication_ocr.router, prefix="/api")
+app.include_router(videos.router, prefix="/api")
 
 @app.get("/")
 def read_root():

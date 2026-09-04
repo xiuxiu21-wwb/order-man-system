@@ -1,0 +1,57 @@
+<view class="video-page">
+  <swiper class="video-swiper" vertical="true" circular="{{videos.length > 1}}" current="{{currentIndex}}" bindchange="onSlideChange">
+    <swiper-item wx:for="{{videos}}" wx:key="id">
+      <view class="video-slide">
+        <video
+          id="video-{{index}}"
+          class="video-player"
+          src="{{item.shouldLoad ? item.play_url : ''}}"
+          poster="{{item.cover_url}}"
+          autoplay="{{index === currentIndex && !paused}}"
+          loop="false"
+          controls="false"
+          show-center-play-btn="false"
+          object-fit="cover"
+          bindtap="togglePlayback"
+          bindended="onVideoEnded"
+          bindloadedmetadata="onVideoReady"
+          binderror="onVideoError"
+          data-index="{{index}}"
+        ></video>
+        <image
+          wx:if="{{!item.isReady}}"
+          class="video-poster"
+          src="{{item.cover_url}}"
+          mode="aspectFill"
+        ></image>
+        <view class="video-gradient"></view>
+        <view class="video-topbar">
+          <view class="video-back" bindtap="goBack">‹</view>
+          <view class="video-title">家护伴精选</view>
+          <view class="video-count">{{currentIndex + 1}} / {{videos.length}}</view>
+        </view>
+        <view class="video-copy">
+          <view class="video-name">{{item.title}}</view>
+          <view class="video-description">{{item.description}}</view>
+          <view class="video-source">来源：{{item.source}}</view>
+        </view>
+        <view class="video-actions">
+          <view class="video-action" bindtap="togglePlayback">
+            <view class="video-action-circle">{{paused ? '▶' : 'Ⅱ'}}</view>
+            <text>{{paused ? '播放' : '暂停'}}</text>
+          </view>
+          <view class="video-action" bindtap="nextVideo">
+            <view class="video-action-circle">↓</view>
+            <text>下一个</text>
+          </view>
+        </view>
+        <view class="video-hint">上下滑动切换视频</view>
+      </view>
+    </swiper-item>
+  </swiper>
+  <view class="video-empty" wx:if="{{!loading && videos.length === 0}}">
+    <view class="empty-title">暂时没有视频</view>
+    <view class="empty-copy">请稍后再试</view>
+  </view>
+  <view class="video-loading" wx:if="{{loading && videos.length === 0}}">正在准备视频…</view>
+</view>

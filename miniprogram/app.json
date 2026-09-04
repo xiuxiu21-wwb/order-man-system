@@ -15,7 +15,8 @@
     "pages/family/alerts",
     "pages/family/map",
     "pages/family/bind-elder",
-    "pages/test/test"
+    "pages/test/test",
+    "pages/elder/videos"
   ],
   "window": {
     "backgroundTextStyle": "light",
