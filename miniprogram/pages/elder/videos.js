@@ -6,22 +6,10 @@ const VIDEO_CACHE_KEY = 'jiahuban_short_video_cache_v3'
 const MAX_CACHED_VIDEOS = 12
 
 const BUILT_IN_VIDEOS = [
-  {
-    id: 'legacy-wellness-1',
-    title: '跟着节奏做舒缓伸展',
-    description: '动作慢一点，身体更舒服。',
-    source: '家护伴精选',
-    video_url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-    cover_url: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&h=1200&fit=crop'
-  },
-  {
-    id: 'legacy-wellness-2',
-    title: '公园散步小贴士',
-    description: '选择平整路线，记得带水，量力而行。',
-    source: '家护伴精选',
-    video_url: 'https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4',
-    cover_url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&h=1200&fit=crop'
-  }
+  ['care-clip-01', 'clip-01', '湖边慢步', '人流中的轻松片刻。'],
+  ['care-clip-05', 'clip-05', '城市散步', '街边车流与行人风景。'],
+  ['care-clip-09', 'clip-09', '公园绿意', '树影下的宁静公园。'],
+  ['care-clip-11', 'clip-11', '花开时节', '近距观赏花朵。']
 ]
 
 Page({
@@ -56,7 +44,14 @@ Page({
   },
 
   getBuiltInVideos() {
-    return BUILT_IN_VIDEOS
+    return BUILT_IN_VIDEOS.map(([id, file, title, description]) => ({
+      id,
+      title,
+      description,
+      source: '家护伴短片',
+      video_url: `/videos/assets/${file}.mp4`,
+      cover_url: `/videos/assets/${file}.jpg`
+    }))
   },
 
   getCache() {
